@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maintenance</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#0f1117;color:#e2e8f0;font-size:14px}
+:root{--bg:#0f1117;--card:#1a1d2e;--border:#2a2f47;--accent:#3b82f6;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--muted:#94a3b8;--mono:'JetBrains Mono',monospace}
+
+/* LAYOUT */
+#app{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#13151e;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100}
+.main{margin-left:220px;flex:1;display:flex;flex-direction:column}
+
+/* SIDEBAR */
+.logo{padding:18px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.logo-name{font-weight:700;font-size:15px}
+.logo-sub{font-size:11px;color:var(--muted)}
+nav{padding:12px 8px;flex:1;overflow-y:auto}
+.nav-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#475569;padding:6px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;color:var(--muted);text-decoration:none;font-size:13px;cursor:pointer;margin-bottom:2px;transition:.15s}
+.nav-item:hover{background:var(--card);color:#e2e8f0}
+.nav-item.active{background:rgba(59,130,246,.12);color:var(--accent);font-weight:500}
+.nav-sep{height:1px;background:var(--border);margin:8px 0}
+.sidebar-ft{padding:12px 14px;border-top:1px solid var(--border);font-size:12px;color:#475569;display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:#475569}
+.dot.on{background:var(--green);box-shadow:0 0 5px var(--green)}
+
+/* TOPBAR */
+.topbar{height:52px;background:#13151e;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:50}
+.topbar-title{font-weight:600;font-size:15px;flex:1}
+.sync{font-size:12px;color:var(--accent)}
+
+/* PAGES */
+.pages{flex:1}
+.page{display:none;padding:26px 30px;max-width:1200px}
+.page.active{display:block}
+.page-hd{margin-bottom:20px}
+.page-hd h1{font-size:20px;font-weight:700;margin-bottom:3px}
+.page-hd p{color:var(--muted);font-size:13px}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:24px}
+
+/* FORM GRID */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.f-full{grid-column:1/-1}
+.flabel{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:5px}
+.req{color:var(--orange)}
+.finput,.fsel,.ftxt{width:100%;background:#0a0c14;border:1px solid var(--border);border-radius:6px;color:#e2e8f0;font-family:inherit;font-size:13.5px;padding:8px 11px;transition:.15s}
+.finput:focus,.fsel:focus,.ftxt:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.finput.auto{font-family:var(--mono);font-size:12px;color:var(--muted);background:#070810}
+.ftxt{resize:vertical;min-height:72px}
+.fsel option{background:var(--card)}
+.fhint{font-size:11px;color:#475569;margin-top:3px}
+.auto-badge{display:inline-block;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--accent);border-radius:4px;font-size:10px;font-weight:600;padding:1px 6px;margin-top:3px}
+.frow{display:flex;gap:8px;align-items:flex-start}
+.frow .fsel{flex:1}
+
+/* ACTIONS */
+.form-actions{display:flex;justify-content:flex-end;gap:8px;padding-top:16px;border-top:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:6px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:.15s}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:#2563eb}
+.btn-secondary{background:transparent;color:var(--muted);border-color:var(--border)}
+.btn-secondary:hover{background:var(--card);color:#e2e8f0}
+.btn-outline{background:transparent;color:var(--accent);border-color:var(--accent)}
+.btn-outline:hover{background:rgba(59,130,246,.08)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-icon{width:36px;height:36px;background:#0a0c14;border:1px solid var(--border);border-radius:6px;color:var(--accent);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+.btn-icon:hover{background:rgba(59,130,246,.1);border-color:var(--accent)}
+
+/* DATA TABLE */
+.data-sec{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.data-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
+.data-hd h2{font-size:14px;font-weight:600}
+.data-controls{display:flex;gap:8px;align-items:center}
+.search{background:#0a0c14;border:1px solid var(--border);border-radius:6px;color:#e2e8f0;font-size:13px;padding:6px 11px;width:180px}
+.search:focus{outline:none;border-color:var(--accent)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:#1f2236;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:9px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tbody tr:hover td{background:#1f2236}
+.tbl tbody tr:last-child td{border-bottom:none}
+.empty-row td{text-align:center;color:#475569;padding:24px}
+.cell-act{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;font-size:11.5px}
+
+/* ADMIN */
+.notice{display:flex;gap:12px;background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:13.5px;color:var(--muted)}
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.acard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.acard-hd{display:flex;align-items:flex-start;gap:10px}
+.acard-hd h3{font-size:13.5px;font-weight:600;margin-bottom:2px}
+.acard-hd p{font-size:11.5px;color:#475569}
+.aicon{font-size:20px;flex-shrink:0}
+.test-res{font-size:12px;margin-left:6px}
+.save-bar{display:flex;align-items:center;gap:14px;padding:18px 0;border-top:1px solid var(--border);margin-bottom:28px}
+.save-fb{font-size:13px;color:var(--green)}
+.gs-steps{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+.gs-steps h2{font-size:15px;font-weight:600;margin-bottom:8px}
+.gs-steps p{color:var(--muted);font-size:13px;margin-bottom:12px}
+ol.steps{padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex-direction:column;gap:8px}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:12px;width:400px;max-width:100%}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border)}
+.modal-hd h3{font-size:14px;font-weight:600}
+.modal-x{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer}
+.modal-body{padding:18px;display:flex;flex-direction:column;gap:12px}
+.modal-ft{padding:14px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 16px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:300;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;pointer-events:none;max-width:300px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.info{border-left:3px solid var(--accent)}
+
+/* RESPONSIVE */
+@media(max-width:860px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .menu-btn{display:flex !important}
+  .fgrid{grid-template-columns:1fr}
+  .agrid{grid-template-columns:1fr}
+  .page{padding:16px}
+  .f-full{grid-column:1}
+}
+.menu-btn{display:none;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
+</style>
+</head>
+<body>
+<div id="app">
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-icon">⚙</div>
+    <div><div class="logo-name">Maintenance</div></div>
+  </div>
+  <nav>
+    <div class="nav-lbl">Formulaires</div>
+    <div class="nav-item active" data-page="equipement">🔧 Liste Équipement</div>
+    <div class="nav-item" data-page="unite">🏭 Unité d'Intervention</div>
+    <div class="nav-item" data-page="processus">📋 Processus</div>
+    <div class="nav-item" data-page="maintenance">🛠 Maintenance</div>
+    <div class="nav-sep"></div>
+    <div class="nav-item" data-page="admin">⚙ Administration</div>
+  </nav>
+  <div class="sidebar-ft"><span class="dot" id="dot"></span><span id="conn-txt">Mode local</span></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn">☰</button>
+  <div class="topbar-title" id="topTitle">Liste Équipement</div>
+  <span class="sync" id="sync" style="display:none">↻ Sync...</span>
+</header>
+<div class="pages">
+
+<!-- ===== PAGE: EQUIPEMENT ===== -->
+<div class="page active" id="page-equipement">
+  <div class="page-hd"><h1>Liste des Équipements</h1><p>Enregistrement des machines et matériels.</p></div>
+  <div class="card">
+    <div class="fgrid">
+      <div>
+        <label class="flabel">Machine / Matériel <span class="req">*</span></label>
+        <input id="eq-machine" class="finput" placeholder="Nom de la machine" oninput="genEqCode()">
+      </div>
+      <div>
+        <label class="flabel">Code Machine / Équipement</label>
+        <input id="eq-code" class="finput auto" readonly placeholder="Généré auto">
+        <span class="auto-badge">Auto</span>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="clearForm('eq')">Annuler</button>
+      <button class="btn btn-primary" onclick="submit('eq')">Enregistrer</button>
+    </div>
+  </div>
+  <div class="data-sec">
+    <div class="data-hd"><h2>Équipements enregistrés</h2>
+      <div class="data-controls">
+        <input class="search" placeholder="Rechercher..." oninput="filter('equipement',this.value)">
+        <button class="btn btn-outline btn-sm" onclick="loadData('equipement')">↻</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code</th><th>Machine / Matériel</th></tr></thead>
+    <tbody id="tb-equipement"><tr class="empty-row"><td colspan="2">Chargement...</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: UNITE ===== -->
+<div class="page" id="page-unite">
+  <div class="page-hd"><h1>Unité d'Intervention</h1><p>Associer les unités aux équipements.</p></div>
+  <div class="card">
+    <div class="fgrid">
+      <div>
+        <label class="flabel">Machine / Matériel <span class="req">*</span></label>
+        <select id="un-machine" class="fsel" onchange="onUnMachine()"><option value="">— Sélectionner —</option></select>
+      </div>
+      <div>
+        <label class="flabel">Code Équipement</label>
+        <input id="un-codeEqpt" class="finput auto" readonly placeholder="Auto">
+        <span class="auto-badge">Auto</span>
+      </div>
+      <div class="f-full">
+        <label class="flabel">Unité d'Intervention <span class="req">*</span></label>
+        <input id="un-ui" class="finput" placeholder="Nom de l'unité" oninput="genUnCode()">
+      </div>
+      <div>
+        <label class="flabel">Code UI</label>
+        <input id="un-codeUI" class="finput auto" readonly placeholder="Auto">
+        <span class="auto-badge">Auto</span>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="clearForm('un')">Annuler</button>
+      <button class="btn btn-primary" onclick="submit('un')">Enregistrer</button>
+    </div>
+  </div>
+  <div class="data-sec">
+    <div class="data-hd"><h2>Unités enregistrées</h2>
+      <div class="data-controls">
+        <input class="search" placeholder="Rechercher..." oninput="filter('unite',this.value)">
+        <button class="btn btn-outline btn-sm" onclick="loadData('unite')">↻</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Machine</th><th>Unité d'Intervention</th><th>Code Eqpt</th><th>Code UI</th></tr></thead>
+    <tbody id="tb-unite"><tr class="empty-row"><td colspan="4">Chargement...</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: PROCESSUS ===== -->
+<div class="page" id="page-processus">
+  <div class="page-hd"><h1>Processus de Maintenance</h1><p>Actions de maintenance préventive par unité.</p></div>
+  <div class="card">
+    <div class="fgrid">
+      <div>
+        <label class="flabel">Machine / Matériel <span class="req">*</span></label>
+        <select id="pr-machine" class="fsel" onchange="onPrMachine()"><option value="">— Sélectionner —</option></select>
+      </div>
+      <div>
+        <label class="flabel">Unité d'Intervention <span class="req">*</span></label>
+        <select id="pr-ui" class="fsel" onchange="onPrUI()"><option value="">— Sélectionner —</option></select>
+      </div>
+      <div>
+        <label class="flabel">Code UI</label>
+        <input id="pr-codeUI" class="finput auto" readonly placeholder="Auto">
+      </div>
+      <div>
+        <label class="flabel">Code Action</label>
+        <input id="pr-codeAction" class="finput auto" readonly placeholder="Auto">
+      </div>
+      <div class="f-full">
+        <label class="flabel">Actions <span class="req">*</span></label>
+        <textarea id="pr-actions" class="ftxt" placeholder="Décrire l'action..."></textarea>
+      </div>
+      <div>
+        <label class="flabel">Fréquence annuelle</label>
+        <input id="pr-freq" class="finput" type="number" step="0.01" placeholder="ex: 2, 0.5, 12">
+        <p class="fhint">0.5=semestriel · 1=annuel · 12=mensuel</p>
+      </div>
+      <div>
+        <label class="flabel">Consommable</label>
+        <input id="pr-conso" class="finput" placeholder="Pièces ou produits">
+      </div>
+      <div>
+        <label class="flabel">Prévision décaissement</label>
+        <input id="pr-prev" class="finput" placeholder="Coût estimé">
+      </div>
+      <div>
+        <label class="flabel">Responsable <span class="req">*</span></label>
+        <div class="frow">
+          <select id="pr-resp" class="fsel" onchange="onPrResp()"><option value="">— Sélectionner —</option></select>
+          <button class="btn-icon" onclick="openModal()" title="Ajouter">+</button>
+        </div>
+      </div>
+      <div>
+        <label class="flabel">Code Responsabilité</label>
+        <input id="pr-codeResp" class="finput auto" readonly placeholder="Auto">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="clearForm('pr')">Annuler</button>
+      <button class="btn btn-primary" onclick="submit('pr')">Enregistrer</button>
+    </div>
+  </div>
+  <div class="data-sec">
+    <div class="data-hd"><h2>Processus enregistrés</h2>
+      <div class="data-controls">
+        <input class="search" placeholder="Rechercher..." oninput="filter('processus',this.value)">
+        <button class="btn btn-outline btn-sm" onclick="loadData('processus')">↻</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code UI</th><th>Code Action</th><th>Machine</th><th>Unité</th><th>Actions</th><th>Fréq/an</th><th>Consommable</th><th>Prévision</th><th>Responsable</th></tr></thead>
+    <tbody id="tb-processus"><tr class="empty-row"><td colspan="9">Chargement...</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: MAINTENANCE ===== -->
+<div class="page" id="page-maintenance">
+  <div class="page-hd"><h1>Enregistrement de Maintenance</h1><p>Saisir les interventions réalisées.</p></div>
+  <div class="card">
+    <div class="fgrid">
+      <div>
+        <label class="flabel">Date d'intervention</label>
+        <input id="ma-date" class="finput auto" readonly>
+        <span class="auto-badge">Aujourd'hui</span>
+      </div>
+      <div>
+        <label class="flabel">Machine / Matériel <span class="req">*</span></label>
+        <select id="ma-machine" class="fsel" onchange="onMaMachine()"><option value="">— Sélectionner —</option></select>
+      </div>
+      <div>
+        <label class="flabel">Unité d'Intervention <span class="req">*</span></label>
+        <select id="ma-ui" class="fsel" onchange="onMaUI()"><option value="">— Sélectionner —</option></select>
+      </div>
+      <div class="f-full">
+        <label class="flabel">Action réalisée <span class="req">*</span></label>
+        <select id="ma-action" class="fsel" onchange="onMaAction()"><option value="">— Sélectionner —</option></select>
+      </div>
+      <div>
+        <label class="flabel">Code Action</label>
+        <input id="ma-codeAction" class="finput auto" readonly placeholder="Auto">
+      </div>
+      <div>
+        <label class="flabel">Prochaine intervention</label>
+        <input id="ma-next" class="finput auto" readonly placeholder="Calculée auto">
+        <p class="fhint">Date + 365/fréquence annuelle</p>
+      </div>
+      <div>
+        <label class="flabel">Poste Responsable</label>
+        <select id="ma-poste" class="fsel" onchange="onMaPoste()"><option value="">— Sélectionner —</option></select>
+      </div>
+      <div>
+        <label class="flabel">Nom Responsable</label>
+        <select id="ma-nom" class="fsel"><option value="">— Sélectionner —</option></select>
+      </div>
+      <div class="f-full">
+        <label class="flabel">Observation</label>
+        <textarea id="ma-obs" class="ftxt" placeholder="Remarques sur l'intervention..."></textarea>
+      </div>
+      <div>
+        <label class="flabel">Code Intervention</label>
+        <input id="ma-codeInt" class="finput auto" readonly placeholder="Auto">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="clearForm('ma')">Annuler</button>
+      <button class="btn btn-primary" onclick="submit('ma')">Enregistrer</button>
+    </div>
+  </div>
+  <div class="data-sec">
+    <div class="data-hd"><h2>Interventions enregistrées</h2>
+      <div class="data-controls">
+        <input class="search" placeholder="Rechercher..." oninput="filter('maintenance',this.value)">
+        <button class="btn btn-outline btn-sm" onclick="loadData('maintenance')">↻</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code</th><th>Date</th><th>Machine</th><th>Unité</th><th>Action</th><th>Prochaine</th><th>Responsable</th><th>Obs.</th></tr></thead>
+    <tbody id="tb-maintenance"><tr class="empty-row"><td colspan="8">Aucune intervention.</td></tr></tbody></table></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: ADMIN ===== -->
+<div class="page" id="page-admin">
+  <div class="page-hd"><h1>Administration</h1><p>Configuration des URLs Google Apps Script.</p></div>
+  <div class="notice">ℹ️ &nbsp;Collez ici les URLs de votre <strong>Google Apps Script Web App</strong> (déployé avec accès public). Le fichier <code>Code.gs</code> est fourni avec cette application.</div>
+  <div class="agrid">
+    <div class="acard">
+      <div class="acard-hd"><span class="aicon">🔧</span><div><h3>Base Liste Équipement</h3><p>Feuille: Base Liste Equipement</p></div></div>
+      <input id="url-equipement" class="finput" placeholder="https://script.google.com/macros/s/.../exec">
+      <div><button class="btn btn-outline btn-sm" onclick="testURL('equipement')">Tester</button><span class="test-res" id="tr-equipement"></span></div>
+    </div>
+    <div class="acard">
+      <div class="acard-hd"><span class="aicon">🏭</span><div><h3>Base Unité d'Intervention</h3><p>Feuille: Base Unité d'intervention</p></div></div>
+      <input id="url-unite" class="finput" placeholder="https://script.google.com/macros/s/.../exec">
+      <div><button class="btn btn-outline btn-sm" onclick="testURL('unite')">Tester</button><span class="test-res" id="tr-unite"></span></div>
+    </div>
+    <div class="acard">
+      <div class="acard-hd"><span class="aicon">📋</span><div><h3>Base Processus</h3><p>Feuille: Base Processus</p></div></div>
+      <input id="url-processus" class="finput" placeholder="https://script.google.com/macros/s/.../exec">
+      <div><button class="btn btn-outline btn-sm" onclick="testURL('processus')">Tester</button><span class="test-res" id="tr-processus"></span></div>
+    </div>
+    <div class="acard">
+      <div class="acard-hd"><span class="aicon">🛠</span><div><h3>Base Maintenance</h3><p>Feuille: Base Maintenance</p></div></div>
+      <input id="url-maintenance" class="finput" placeholder="https://script.google.com/macros/s/.../exec">
+      <div><button class="btn btn-outline btn-sm" onclick="testURL('maintenance')">Tester</button><span class="test-res" id="tr-maintenance"></span></div>
+    </div>
+    <div class="acard">
+      <div class="acard-hd"><span class="aicon">👥</span><div><h3>Personnel Maintenance</h3><p>Feuille: Personnel Maintenance</p></div></div>
+      <input id="url-personnel" class="finput" placeholder="https://script.google.com/macros/s/.../exec">
+      <div><button class="btn btn-outline btn-sm" onclick="testURL('personnel')">Tester</button><span class="test-res" id="tr-personnel"></span></div>
+    </div>
+  </div>
+  <div class="save-bar">
+    <button class="btn btn-primary" onclick="saveConfig()">💾 Sauvegarder</button>
+    <span class="save-fb" id="save-fb"></span>
+  </div>
+  <div class="gs-steps">
+    <h2>🚀 Mise en service en 3 étapes</h2>
+    <p>Cette application fonctionne avec 2 fichiers : <strong>index.html</strong> (GitHub Pages) + <strong>Code.gs</strong> (Google Apps Script).</p>
+    <ol class="steps">
+      <li><strong>Google Sheets :</strong> Créez un Google Sheet avec les feuilles <code>Base Liste Equipement</code>, <code>Base Unité d'intervention</code>, <code>Base Processus</code>, <code>Base Maintenance</code>, <code>Personnel Maintenance</code></li>
+      <li><strong>Apps Script :</strong> Dans le Sheet → Extensions → Apps Script → Collez le contenu de <code>Code.gs</code> → Déployer comme Web App (accès : Tout le monde) → Copiez l'URL</li>
+      <li><strong>Ici :</strong> Collez l'URL dans les champs ci-dessus → Sauvegarder</li>
+    </ol>
+  </div>
+</div>
+
+</div><!-- /pages -->
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL Personnel -->
+<div class="modal-ov" id="modalP" style="display:none">
+  <div class="modal">
+    <div class="modal-hd"><h3>Ajouter un Responsable</h3><button class="modal-x" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div><label class="flabel">Nom et Prénom</label><input id="new-nom" class="finput" placeholder="Nom complet"></div>
+      <div><label class="flabel">Poste</label><input id="new-poste" class="finput" placeholder="Intitulé du poste"></div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="addPersonnel()">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// STORE (chargé depuis Google Sheets au démarrage)
+// ============================================================
+let store = {
+  equipement:  [],
+  unite:       [],
+  processus:   [],
+  maintenance: [],
+  personnel:   []
+};
+
+// ============================================================
+// CONFIG (URLs Apps Script)
+// ============================================================
+const CFG_KEY = 'abe_cfg';
+let cfg = {equipement:'',unite:'',processus:'',maintenance:'',personnel:''};
+
+function loadCfg() {
+  try { const s = localStorage.getItem(CFG_KEY); if(s) cfg = JSON.parse(s); } catch(e){}
+  Object.keys(cfg).forEach(k => {
+    const el = document.getElementById('url-'+k);
+    if(el) el.value = cfg[k]||'';
+  });
+  updateStatus();
+}
+
+function saveConfig() {
+  Object.keys(cfg).forEach(k => {
+    const el = document.getElementById('url-'+k);
+    if(el) cfg[k] = el.value.trim();
+  });
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  updateStatus();
+  const fb = document.getElementById('save-fb');
+  fb.textContent = '✓ Sauvegardé — rechargement des données...';
+  setTimeout(()=>fb.textContent='',4000);
+  toast('Configuration sauvegardée. Chargement en cours...','success');
+  initApp();
+}
+
+function updateStatus() {
+  const on = Object.values(cfg).some(u=>u&&u.trim());
+  document.getElementById('dot').className = 'dot'+(on?' on':'');
+  document.getElementById('conn-txt').textContent = on?'Google Sheets lié':'Mode local';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const TITLES = {equipement:'Liste Équipement',unite:"Unité d'Intervention",processus:'Processus',maintenance:'Maintenance',admin:'Administration'};
+
+document.querySelectorAll('.nav-item').forEach(el => {
+  el.addEventListener('click', ()=>{
+    navigateTo(el.dataset.page);
+    if(window.innerWidth<=860) document.getElementById('sidebar').classList.remove('open');
+  });
+});
+
+document.getElementById('menuBtn').addEventListener('click', ()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+function navigateTo(page) {
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('topTitle').textContent = TITLES[page]||page;
+  if(page!=='admin') loadData(page);
+}
+
+// ============================================================
+// API GOOGLE SHEETS
+// ============================================================
+async function apiGet(sheet) {
+  const url = cfg[sheet]; if(!url) return null;
+  try {
+    const r = await fetch(url+'?sheet='+sheet);
+    return r.ok ? await r.json() : null;
+  } catch(e) { return null; }
+}
+
+async function apiPost(sheet, data) {
+  const url = cfg[sheet]; if(!url) return {ok:false};
+  try {
+    const r = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sheet,data})});
+    return r.ok ? await r.json() : {ok:false};
+  } catch(e) { return {ok:false}; }
+}
+
+async function loadData(sheet) {
+  if(cfg[sheet]) {
+    showSync(true);
+    const d = await apiGet(sheet);
+    showSync(false);
+    if(d && Array.isArray(d)) {
+      store[sheet] = d;
+      // Refresh dropdowns si données de référence mises à jour
+      if(['equipement','unite','processus','personnel'].includes(sheet)) initDropdowns();
+    }
+  }
+  render(sheet, store[sheet]||[]);
+}
+
+// ============================================================
+// RENDER TABLES
+// ============================================================
+const RENDERS = {
+  equipement:  r=>`<td><code>${r.code||''}</code></td><td>${r.machine||''}</td>`,
+  unite:       r=>`<td>${r.machine||''}</td><td>${r.ui||''}</td><td><code>${r.codeEqpt||''}</code></td><td><code>${r.codeUI||''}</code></td>`,
+  processus:   r=>`<td><code>${r.codeUI||''}</code></td><td><code>${r.codeAction||''}</code></td><td>${r.machine||''}</td><td>${r.ui||''}</td><td class="cell-act">${(r.actions||'').substring(0,90)}</td><td>${r.freq!=null?r.freq:''}</td><td>${r.consommable||''}</td><td>${r.prevision||''}</td><td>${r.responsable||''}</td>`,
+  maintenance: r=>`<td><code>${r.codeInt||''}</code></td><td>${r.date||''}</td><td>${r.machine||''}</td><td>${r.ui||''}</td><td class="cell-act">${(r.action||'').substring(0,70)}</td><td>${r.next||''}</td><td>${r.responsable||''}</td><td>${r.obs||''}</td>`
+};
+
+function render(sheet, data) {
+  const tb = document.getElementById('tb-'+sheet); if(!tb) return;
+  if(!data||!data.length) {
+    const cols = {equipement:2,unite:4,processus:9,maintenance:8}[sheet]||4;
+    tb.innerHTML=`<tr class="empty-row"><td colspan="${cols}">Aucune donnée.</td></tr>`; return;
+  }
+  tb.innerHTML = data.map(r=>`<tr>${RENDERS[sheet](r)}</tr>`).join('');
+}
+
+function filter(sheet, q) {
+  const tb = document.getElementById('tb-'+sheet); if(!tb) return;
+  const ql = q.toLowerCase();
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(r=>{
+    r.style.display = r.textContent.toLowerCase().includes(ql)?'':'none';
+  });
+}
+
+// ============================================================
+// DROPDOWNS INIT
+// ============================================================
+function fillSel(id, items, vk, lk) {
+  const s = document.getElementById(id); if(!s) return;
+  const prev = s.value;
+  s.innerHTML='<option value="">— Sélectionner —</option>';
+  items.forEach(i=>{ const o=document.createElement('option'); o.value=i[vk]; o.textContent=i[lk]; s.appendChild(o); });
+  if(prev) s.value=prev;
+}
+
+function initDropdowns() {
+  const machines = [...new Map(store.equipement.map(e=>[e.machine,e])).values()];
+  ['un-machine','pr-machine','ma-machine'].forEach(id=>fillSel(id,machines,'machine','machine'));
+  fillSel('pr-resp',store.personnel,'poste','poste');
+  const postes = [...new Set(store.personnel.map(p=>p.poste))].map(p=>{return {id:p,lbl:p}});
+  fillSel('ma-poste',postes,'id','lbl');
+}
+
+// ============================================================
+// FORM: EQUIPEMENT
+// ============================================================
+function genEqCode() {
+  const m = v('eq-machine').trim(); if(!m) { set('eq-code',''); return; }
+  const pfx = m.substring(0,3).toUpperCase().replace(/\s/g,'');
+  const n = store.equipement.filter(e=>e.code.startsWith(pfx)).length+1;
+  set('eq-code', pfx+'_'+n);
+}
+
+// ============================================================
+// FORM: UNITE
+// ============================================================
+function onUnMachine() {
+  const m=v('un-machine');
+  const eq=store.equipement.find(e=>e.machine===m);
+  set('un-codeEqpt', eq?eq.code:'');
+  genUnCode();
+}
+function genUnCode() {
+  const c=v('un-codeEqpt'); if(!c){set('un-codeUI','');return;}
+  const n=store.unite.filter(u=>u.codeEqpt===c).length+1;
+  set('un-codeUI', c+String(n).padStart(2,'0'));
+}
+
+// ============================================================
+// FORM: PROCESSUS
+// ============================================================
+function onPrMachine() {
+  const m=v('pr-machine');
+  fillSel('pr-ui',store.unite.filter(u=>u.machine===m),'ui','ui');
+  set('pr-codeUI',''); set('pr-codeAction','');
+}
+function onPrUI() {
+  const m=v('pr-machine'), ui=v('pr-ui');
+  const found=store.unite.find(u=>u.machine===m&&u.ui.trim()===ui.trim());
+  const cUI=found?found.codeUI:'';
+  set('pr-codeUI',cUI);
+  if(cUI){ const n=store.processus.filter(p=>p.codeUI===cUI).length+1; set('pr-codeAction',cUI+String(n).padStart(2,'0')); }
+}
+function onPrResp() {
+  const r=v('pr-resp');
+  const p=store.personnel.find(x=>x.poste===r);
+  set('pr-codeResp',p?p.codePoste:'');
+}
+
+// ============================================================
+// FORM: MAINTENANCE
+// ============================================================
+function onMaMachine() {
+  const m=v('ma-machine');
+  fillSel('ma-ui',store.unite.filter(u=>u.machine===m),'ui','ui');
+  document.getElementById('ma-action').innerHTML='<option value="">— Sélectionner —</option>';
+  set('ma-codeAction',''); set('ma-next',''); set('ma-codeInt','');
+}
+function onMaUI() {
+  const m=v('ma-machine'), ui=v('ma-ui');
+  const found=store.unite.find(u=>u.machine===m&&u.ui.trim()===ui.trim());
+  if(!found) return;
+  const acts=store.processus.filter(p=>p.codeUI===found.codeUI);
+  const s=document.getElementById('ma-action');
+  s.innerHTML='<option value="">— Sélectionner —</option>';
+  acts.forEach(a=>{ const o=document.createElement('option'); o.value=a.codeAction; o.textContent=(a.actions||'').substring(0,85); o.dataset.freq=a.freq||''; o.dataset.resp=a.responsable||''; s.appendChild(o); });
+}
+function onMaAction() {
+  const ca=v('ma-action'); set('ma-codeAction',ca);
+  const proc=store.processus.find(p=>p.codeAction===ca);
+  if(proc){
+    if(proc.freq&&proc.freq>0){
+      const d=new Date(); d.setDate(d.getDate()+Math.round(365/proc.freq));
+      set('ma-next',d.toLocaleDateString('fr-FR'));
+    }
+    const s=document.getElementById('ma-poste'); s.value=proc.responsable||''; onMaPoste();
+  }
+  const ds=v('ma-date').replace(/-/g,'');
+  if(ds&&ca) set('ma-codeInt',ds+'_'+ca);
+}
+function onMaPoste() {
+  const p=v('ma-poste');
+  fillSel('ma-nom',store.personnel.filter(x=>x.poste===p),'nom','nom');
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
+async function submit(form) {
+  let data={}, sheet='';
+
+  if(form==='eq'){
+    const m=v('eq-machine').trim(); if(!m){toast('Saisissez le nom de la machine.','error');return;}
+    genEqCode(); data={code:v('eq-code'),machine:m}; sheet='equipement';
+    store.equipement.push(data); initDropdowns();
+  }
+  else if(form==='un'){
+    const m=v('un-machine'), ui=v('un-ui').trim(); if(!m||!ui){toast('Champs obligatoires manquants.','error');return;}
+    data={machine:m,ui,codeEqpt:v('un-codeEqpt'),codeUI:v('un-codeUI')}; sheet='unite';
+    store.unite.push(data);
+  }
+  else if(form==='pr'){
+    const m=v('pr-machine'),ui=v('pr-ui'),ac=v('pr-actions').trim(),re=v('pr-resp');
+    if(!m||!ui||!ac||!re){toast('Champs obligatoires manquants.','error');return;}
+    data={codeUI:v('pr-codeUI'),codeAction:v('pr-codeAction'),machine:m,ui,actions:ac,freq:parseFloat(v('pr-freq'))||null,consommable:v('pr-conso'),prevision:v('pr-prev'),responsable:re,codeResp:parseInt(v('pr-codeResp'))||null};
+    sheet='processus'; store.processus.push(data);
+  }
+  else if(form==='ma'){
+    const m=v('ma-machine'),ui=v('ma-ui'),ca=v('ma-codeAction');
+    if(!m||!ui||!ca){toast('Champs obligatoires manquants.','error');return;}
+    const sel=document.getElementById('ma-action');
+    data={date:v('ma-date'),machine:m,ui,action:sel.options[sel.selectedIndex]?.textContent||'',codeAction:ca,next:v('ma-next'),poste:v('ma-poste'),responsable:v('ma-nom'),obs:v('ma-obs'),codeInt:v('ma-codeInt')};
+    sheet='maintenance'; store.maintenance.push(data);
+  }
+
+  if(cfg[sheet]){
+    showSync(true);
+    const res=await apiPost(sheet,data);
+    showSync(false);
+    toast(res.ok?'Enregistré dans Google Sheets ✓':'Sauvegardé localement (Sheets non dispo)',res.ok?'success':'info');
+  }else{
+    toast('Sauvegardé localement. Configurez une URL dans Administration.','info');
+  }
+  clearForm(form);
+  render(sheet,store[sheet]);
+}
+
+function clearForm(form){
+  const map={eq:['eq-machine','eq-code'],un:['un-machine','un-ui','un-codeEqpt','un-codeUI'],pr:['pr-machine','pr-ui','pr-codeUI','pr-codeAction','pr-actions','pr-freq','pr-conso','pr-prev','pr-resp','pr-codeResp'],ma:['ma-machine','ma-ui','ma-action','ma-codeAction','ma-next','ma-poste','ma-nom','ma-obs','ma-codeInt']};
+  (map[form]||[]).forEach(id=>{const el=document.getElementById(id);if(!el)return;el.tagName==='SELECT'?el.selectedIndex=0:el.value='';});
+  if(form==='ma') set('ma-date', today());
+}
+
+// ============================================================
+// PERSONNEL
+// ============================================================
+function openModal(){document.getElementById('modalP').style.display='flex';}
+function closeModal(){document.getElementById('modalP').style.display='none';}
+function addPersonnel(){
+  const n=v('new-nom').trim(),p=v('new-poste').trim();
+  if(!n||!p){toast('Saisissez nom et poste.','error');return;}
+  store.personnel.push({immat:store.personnel.length+1,nom:n,poste:p,codePoste:store.personnel.length+1,codeIndiv:(store.personnel.length+1)*11});
+  initDropdowns(); closeModal(); toast(n+' ajouté(e).','success');
+}
+
+// ============================================================
+// TEST URL
+// ============================================================
+async function testURL(sheet){
+  const url=document.getElementById('url-'+sheet)?.value.trim();
+  const el=document.getElementById('tr-'+sheet);
+  if(!url){if(el){el.textContent='⚠ URL vide';el.style.color='var(--orange)';}return;}
+  if(el){el.textContent='⌛';el.style.color='var(--muted)';}
+  try{
+    const r=await fetch(url+'?sheet='+sheet+'&test=1');
+    if(el){el.textContent=r.ok?'✓ OK':'✗ Échec ('+r.status+')';el.style.color=r.ok?'var(--green)':'var(--red)';}
+  }catch(e){if(el){el.textContent='✗ Inaccessible';el.style.color='var(--red)';}}
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function v(id){return(document.getElementById(id)||{}).value||'';}
+function set(id,val){const el=document.getElementById(id);if(el)el.value=val;}
+function today(){return new Date().toISOString().split('T')[0];}
+function showSync(on){document.getElementById('sync').style.display=on?'inline':'none';}
+
+function toast(msg,type='info'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+type;
+  setTimeout(()=>t.className='toast',3500);
+}
+
+
+// ============================================================
+// INIT APP — charge toutes les données de référence depuis Sheets
+// ============================================================
+async function initApp() {
+  // Si des URLs sont configurées, on charge depuis Google Sheets
+  const hasURLs = Object.values(cfg).some(u => u && u.trim());
+  if (hasURLs) {
+    showSync(true);
+    showLoader(true, 'Chargement des données depuis Google Sheets...');
+    try {
+      await Promise.all([
+        loadRef('equipement'),
+        loadRef('unite'),
+        loadRef('processus'),
+        loadRef('personnel'),
+        loadRef('maintenance')
+      ]);
+    } catch(e) { console.warn('Erreur chargement init:', e); }
+    showSync(false);
+    showLoader(false);
+  }
+  initDropdowns();
+  render('equipement', store.equipement);
+  render('unite',      store.unite);
+  render('processus',  store.processus);
+  render('maintenance',store.maintenance);
+}
+
+async function loadRef(sheet) {
+  const url = cfg[sheet]; if (!url) return;
+  try {
+    const r = await fetch(url + '?sheet=' + sheet);
+    if (r.ok) {
+      const d = await r.json();
+      if (Array.isArray(d) && d.length > 0) store[sheet] = d;
+    }
+  } catch(e) { console.warn('loadRef error', sheet, e); }
+}
+
+function showLoader(on, msg) {
+  let el = document.getElementById('loader');
+  if (on) {
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'loader';
+      el.style.cssText = 'position:fixed;inset:0;background:rgba(15,17,23,.85);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#e2e8f0;font-size:15px;';
+      el.innerHTML = '<div style="width:40px;height:40px;border:3px solid #2a2f47;border-top-color:#3b82f6;border-radius:50%;animation:spin .8s linear infinite"></div><span id="loader-msg"></span>';
+      document.body.appendChild(el);
+      if (!document.getElementById('spin-style')) {
+        const s = document.createElement('style');
+        s.id = 'spin-style';
+        s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+        document.head.appendChild(s);
+      }
+    }
+    document.getElementById('loader-msg').textContent = msg || 'Chargement...';
+    el.style.display = 'flex';
+  } else {
+    if (el) el.style.display = 'none';
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+loadCfg();
+set('ma-date',today());
+// Chargement initial depuis Google Sheets (ou données vides si non configuré)
+initApp();
+</script>
+</body>
+</html>
