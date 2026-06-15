@@ -121,6 +121,24 @@ ol.steps{padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex
 .toast.error{border-left:3px solid var(--red)}
 .toast.info{border-left:3px solid var(--accent)}
 
+/* MAINTENANCE CHECKLIST */
+.ma-checklist{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;background:#0a0c14;border:1px solid var(--border);border-radius:8px;padding:12px}
+.ma-check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:.15s}
+.ma-check-item:hover{background:rgba(59,130,246,.07)}
+.ma-check-item.selected{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2)}
+.ma-check-item input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--accent);cursor:pointer}
+.ma-check-label{display:flex;flex-direction:column;gap:2px}
+.ma-check-code{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.ma-check-action{font-size:13px;color:#e2e8f0;line-height:1.4}
+/* EDITABLE TABLE CELLS */
+.tbl .td-input{width:100%;background:#0a0c14;border:1px solid var(--border);border-radius:4px;color:#e2e8f0;font-family:inherit;font-size:12.5px;padding:5px 8px}
+.tbl .td-input:focus{outline:none;border-color:var(--accent)}
+.tbl .td-sel{width:100%;background:#0a0c14;border:1px solid var(--border);border-radius:4px;color:#e2e8f0;font-family:inherit;font-size:12.5px;padding:5px 7px}
+.tbl .td-sel:focus{outline:none;border-color:var(--accent)}
+.tbl .td-auto{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.btn-del{background:none;border:none;color:#475569;font-size:16px;cursor:pointer;padding:4px;border-radius:4px;transition:.15s}
+.btn-del:hover{color:var(--red);background:rgba(239,68,68,.1)}
+
 /* RESPONSIVE */
 @media(max-width:860px){
   .sidebar{transform:translateX(-100%)}
@@ -306,8 +324,9 @@ ol.steps{padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex
 
 <!-- ===== PAGE: MAINTENANCE ===== -->
 <div class="page" id="page-maintenance">
-  <div class="page-hd"><h1>Enregistrement de Maintenance</h1><p>Saisir les interventions réalisées.</p></div>
+  <div class="page-hd"><h1>Enregistrement de Maintenance</h1><p>Sélectionnez la machine, l'unité, puis cochez les actions réalisées.</p></div>
   <div class="card">
+    <!-- Ligne 1 : Date + Machine + Unité -->
     <div class="fgrid">
       <div>
         <label class="flabel">Date d'intervention</label>
@@ -322,41 +341,55 @@ ol.steps{padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex
         <label class="flabel">Unité d'Intervention <span class="req">*</span></label>
         <select id="ma-ui" class="fsel" onchange="onMaUI()"><option value="">— Sélectionner —</option></select>
       </div>
-      <div class="f-full">
-        <label class="flabel">Action réalisée <span class="req">*</span></label>
-        <select id="ma-action" class="fsel" onchange="onMaAction()"><option value="">— Sélectionner —</option></select>
+    </div>
+
+    <!-- Sélection multiple des actions -->
+    <div id="ma-actions-zone" style="display:none;margin-bottom:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <label class="flabel" style="margin:0">Actions à enregistrer <span class="req">*</span></label>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="maSelectAll()">Tout sélectionner</button>
+          <button class="btn btn-secondary btn-sm" onclick="maDeselectAll()">Tout désélectionner</button>
+        </div>
       </div>
-      <div>
-        <label class="flabel">Code Action</label>
-        <input id="ma-codeAction" class="finput auto" readonly placeholder="Auto">
+      <div id="ma-checklist" class="ma-checklist"></div>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="maGenerateTable()">
+        ✓ Valider la sélection
+      </button>
+    </div>
+
+    <!-- Tableau éditable des actions sélectionnées -->
+    <div id="ma-table-zone" style="display:none;margin-bottom:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <label class="flabel" style="margin:0">Compléter les informations</label>
+        <button class="btn btn-secondary btn-sm" onclick="maBackToChecklist()">← Modifier la sélection</button>
       </div>
-      <div>
-        <label class="flabel">Prochaine intervention</label>
-        <input id="ma-next" class="finput auto" readonly placeholder="Calculée auto">
-        <p class="fhint">Date + 365/fréquence annuelle</p>
-      </div>
-      <div>
-        <label class="flabel">Poste Responsable</label>
-        <select id="ma-poste" class="fsel" onchange="onMaPoste()"><option value="">— Sélectionner —</option></select>
-      </div>
-      <div>
-        <label class="flabel">Nom Responsable</label>
-        <select id="ma-nom" class="fsel"><option value="">— Sélectionner —</option></select>
-      </div>
-      <div class="f-full">
-        <label class="flabel">Observation</label>
-        <textarea id="ma-obs" class="ftxt" placeholder="Remarques sur l'intervention..."></textarea>
-      </div>
-      <div>
-        <label class="flabel">Code Intervention</label>
-        <input id="ma-codeInt" class="finput auto" readonly placeholder="Auto">
+      <div style="overflow-x:auto">
+        <table class="tbl" id="ma-edit-table">
+          <thead>
+            <tr>
+              <th style="min-width:110px">Code Action</th>
+              <th style="min-width:160px">Action</th>
+              <th style="min-width:110px">Prochaine intervention</th>
+              <th style="min-width:160px">Poste Responsable</th>
+              <th style="min-width:160px">Nom Responsable</th>
+              <th style="min-width:200px">Observation</th>
+              <th style="min-width:160px">Code Intervention</th>
+              <th style="width:40px"></th>
+            </tr>
+          </thead>
+          <tbody id="ma-edit-tbody"></tbody>
+        </table>
       </div>
     </div>
-    <div class="form-actions">
+
+    <div class="form-actions" id="ma-submit-bar" style="display:none">
       <button class="btn btn-secondary" onclick="clearForm('ma')">Annuler</button>
-      <button class="btn btn-primary" onclick="submit('ma')">Enregistrer</button>
+      <button class="btn btn-primary" onclick="submitMaintenance()">💾 Enregistrer toutes les interventions</button>
     </div>
   </div>
+
+  <!-- Table des interventions enregistrées -->
   <div class="data-sec">
     <div class="data-hd"><h2>Interventions enregistrées</h2>
       <div class="data-controls">
@@ -364,8 +397,8 @@ ol.steps{padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex
         <button class="btn btn-outline btn-sm" onclick="loadData('maintenance')">↻</button>
       </div>
     </div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code</th><th>Date</th><th>Machine</th><th>Unité</th><th>Action</th><th>Prochaine</th><th>Responsable</th><th>Obs.</th></tr></thead>
-    <tbody id="tb-maintenance"><tr class="empty-row"><td colspan="8">Aucune intervention.</td></tr></tbody></table></div>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code Intervention</th><th>Date</th><th>Machine</th><th>Unité</th><th>Action</th><th>Prochaine</th><th>Poste</th><th>Responsable</th><th>Obs.</th></tr></thead>
+    <tbody id="tb-maintenance"><tr class="empty-row"><td colspan="9">Aucune intervention.</td></tr></tbody></table></div>
   </div>
 </div>
 
@@ -548,7 +581,7 @@ const RENDERS = {
   equipement:  r=>`<td><code>${r.code||''}</code></td><td>${r.machine||''}</td>`,
   unite:       r=>`<td>${r.machine||''}</td><td>${r.ui||''}</td><td><code>${r.codeEqpt||''}</code></td><td><code>${r.codeUI||''}</code></td>`,
   processus:   r=>`<td><code>${r.codeUI||''}</code></td><td><code>${r.codeAction||''}</code></td><td>${r.machine||''}</td><td>${r.ui||''}</td><td class="cell-act">${(r.actions||'').substring(0,90)}</td><td>${r.freq!=null?r.freq:''}</td><td>${r.consommable||''}</td><td>${r.prevision||''}</td><td>${r.responsable||''}</td>`,
-  maintenance: r=>`<td><code>${r.codeInt||''}</code></td><td>${r.date||''}</td><td>${r.machine||''}</td><td>${r.ui||''}</td><td class="cell-act">${(r.action||'').substring(0,70)}</td><td>${r.next||''}</td><td>${r.responsable||''}</td><td>${r.obs||''}</td>`
+  maintenance: r=>`<td><code>${r.codeInt||''}</code></td><td>${r.date||''}</td><td>${r.machine||''}</td><td>${r.ui||''}</td><td class="cell-act">${(r.action||'').substring(0,60)}</td><td>${r.next||''}</td><td>${r.poste||''}</td><td>${r.responsable||''}</td><td>${r.obs||''}</td>`
 };
 
 function render(sheet, data) {
@@ -583,7 +616,7 @@ function initDropdowns() {
   const machines = [...new Map(store.equipement.map(e=>[e.machine,e])).values()];
   ['un-machine','pr-machine','ma-machine'].forEach(id=>fillSel(id,machines,'machine','machine'));
   fillSel('pr-resp',store.personnel,'poste','poste');
-  const postes = [...new Set(store.personnel.map(p=>p.poste))].map(p=>{return {id:p,lbl:p}});
+  const postes = [...new Set(store.personnel.map(p=>p.poste))].map(p=>({id:p,lbl:p}));
   fillSel('ma-poste',postes,'id','lbl');
 }
 
@@ -637,37 +670,149 @@ function onPrResp() {
 // FORM: MAINTENANCE
 // ============================================================
 function onMaMachine() {
-  const m=v('ma-machine');
-  fillSel('ma-ui',store.unite.filter(u=>u.machine===m),'ui','ui');
-  document.getElementById('ma-action').innerHTML='<option value="">— Sélectionner —</option>';
-  set('ma-codeAction',''); set('ma-next',''); set('ma-codeInt','');
+  const m = v('ma-machine');
+  fillSel('ma-ui', store.unite.filter(u=>u.machine===m), 'ui', 'ui');
+  // Reset zones
+  document.getElementById('ma-actions-zone').style.display = 'none';
+  document.getElementById('ma-table-zone').style.display   = 'none';
+  document.getElementById('ma-submit-bar').style.display   = 'none';
+  document.getElementById('ma-checklist').innerHTML = '';
 }
+
 function onMaUI() {
-  const m=v('ma-machine'), ui=v('ma-ui');
-  const found=store.unite.find(u=>u.machine===m&&u.ui.trim()===ui.trim());
-  if(!found) return;
-  const acts=store.processus.filter(p=>p.codeUI===found.codeUI);
-  const s=document.getElementById('ma-action');
-  s.innerHTML='<option value="">— Sélectionner —</option>';
-  acts.forEach(a=>{ const o=document.createElement('option'); o.value=a.codeAction; o.textContent=(a.actions||'').substring(0,85); o.dataset.freq=a.freq||''; o.dataset.resp=a.responsable||''; s.appendChild(o); });
-}
-function onMaAction() {
-  const ca=v('ma-action'); set('ma-codeAction',ca);
-  const proc=store.processus.find(p=>p.codeAction===ca);
-  if(proc){
-    if(proc.freq&&proc.freq>0){
-      const d=new Date(); d.setDate(d.getDate()+Math.round(365/proc.freq));
-      set('ma-next',d.toLocaleDateString('fr-FR'));
-    }
-    const s=document.getElementById('ma-poste'); s.value=proc.responsable||''; onMaPoste();
+  const m    = v('ma-machine');
+  const ui   = v('ma-ui');
+  const found = store.unite.find(u => u.machine===m && u.ui.trim()===ui.trim());
+
+  // Reset table zone
+  document.getElementById('ma-table-zone').style.display  = 'none';
+  document.getElementById('ma-submit-bar').style.display  = 'none';
+
+  if (!found) { document.getElementById('ma-actions-zone').style.display='none'; return; }
+
+  const acts = store.processus.filter(p => p.codeUI === found.codeUI);
+  const list = document.getElementById('ma-checklist');
+  list.innerHTML = '';
+
+  if (!acts.length) {
+    list.innerHTML = '<div style="color:var(--muted);padding:12px">Aucune action définie pour cette unité.</div>';
+    document.getElementById('ma-actions-zone').style.display = 'block';
+    return;
   }
-  const ds=v('ma-date').replace(/-/g,'');
-  if(ds&&ca) set('ma-codeInt',ds+'_'+ca);
+
+  acts.forEach(a => {
+    const item = document.createElement('label');
+    item.className = 'ma-check-item';
+    item.innerHTML = `
+      <input type="checkbox" value="${a.codeAction}" onchange="maItemToggle(this)">
+      <div class="ma-check-label">
+        <span class="ma-check-code">${a.codeAction}</span>
+        <span class="ma-check-action">${a.actions||''}</span>
+      </div>`;
+    list.appendChild(item);
+  });
+
+  document.getElementById('ma-actions-zone').style.display = 'block';
 }
-function onMaPoste() {
-  const p=v('ma-poste');
-  fillSel('ma-nom',store.personnel.filter(x=>x.poste===p),'nom','nom');
+
+function maItemToggle(cb) {
+  const item = cb.closest('.ma-check-item');
+  item.classList.toggle('selected', cb.checked);
 }
+
+function maSelectAll() {
+  document.querySelectorAll('#ma-checklist input[type=checkbox]').forEach(cb => {
+    cb.checked = true; cb.closest('.ma-check-item').classList.add('selected');
+  });
+}
+
+function maDeselectAll() {
+  document.querySelectorAll('#ma-checklist input[type=checkbox]').forEach(cb => {
+    cb.checked = false; cb.closest('.ma-check-item').classList.remove('selected');
+  });
+}
+
+function maGenerateTable() {
+  const checked = [...document.querySelectorAll('#ma-checklist input[type=checkbox]:checked')];
+  if (!checked.length) { toast('Sélectionnez au moins une action.', 'error'); return; }
+
+  const tbody = document.getElementById('ma-edit-tbody');
+  const date  = v('ma-date');
+  const ds    = date.replace(/-/g,'');
+
+  // Build personnel options HTML
+  const posteOpts = [...new Set(store.personnel.map(p=>p.poste))]
+    .map(p=>`<option value="${p}">${p}</option>`).join('');
+
+  tbody.innerHTML = checked.map(cb => {
+    const ca   = cb.value;
+    const proc = store.processus.find(p => p.codeAction === ca) || {};
+
+    // Calculate next date
+    let nextDate = '';
+    if (proc.freq && proc.freq > 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + Math.round(365 / proc.freq));
+      nextDate = d.toLocaleDateString('fr-FR');
+    }
+
+    const defaultPoste = proc.responsable || '';
+    const codeInt = ds ? ds + '_' + ca : ca;
+    const actionLabel = (proc.actions||'').substring(0,60);
+
+    return `<tr data-ca="${ca}">
+      <td><span class="td-auto">${ca}</span></td>
+      <td><span class="td-auto" style="font-size:11px;font-family:inherit;white-space:normal;line-height:1.3">${actionLabel}</span></td>
+      <td><input class="td-input" value="${nextDate}" placeholder="jj/mm/aaaa"></td>
+      <td>
+        <select class="td-sel" onchange="maRowPosteChange(this)">
+          <option value="">— Poste —</option>
+          ${posteOpts}
+        </select>
+      </td>
+      <td>
+        <select class="td-sel ma-nom-sel">
+          <option value="">— Nom —</option>
+        </select>
+      </td>
+      <td><input class="td-input" placeholder="Observation..." style="width:100%"></td>
+      <td><span class="td-auto">${codeInt}</span></td>
+      <td><button class="btn-del" onclick="this.closest('tr').remove()" title="Supprimer">✕</button></td>
+    </tr>`;
+  }).join('');
+
+  // Pre-fill poste & nom from processus responsable
+  tbody.querySelectorAll('tr').forEach(row => {
+    const ca    = row.dataset.ca;
+    const proc  = store.processus.find(p => p.codeAction === ca) || {};
+    const poste = proc.responsable || '';
+    const selP  = row.querySelector('.td-sel');
+    if (poste) {
+      selP.value = poste;
+      maRowPosteChange(selP);
+    }
+  });
+
+  document.getElementById('ma-table-zone').style.display  = 'block';
+  document.getElementById('ma-submit-bar').style.display  = 'flex';
+  document.getElementById('ma-actions-zone').style.display = 'none';
+}
+
+function maRowPosteChange(sel) {
+  const poste   = sel.value;
+  const nomSel  = sel.closest('tr').querySelector('.ma-nom-sel');
+  const people  = store.personnel.filter(p => p.poste === poste);
+  nomSel.innerHTML = '<option value="">— Nom —</option>' +
+    people.map(p=>`<option value="${p.nom}">${p.nom}</option>`).join('');
+}
+
+function maBackToChecklist() {
+  document.getElementById('ma-table-zone').style.display  = 'none';
+  document.getElementById('ma-submit-bar').style.display  = 'none';
+  document.getElementById('ma-actions-zone').style.display = 'block';
+}
+
+function onMaPoste() {}  // kept for compat
 
 // ============================================================
 // SUBMIT
@@ -691,13 +836,7 @@ async function submit(form) {
     data={codeUI:v('pr-codeUI'),codeAction:v('pr-codeAction'),machine:m,ui,actions:ac,freq:parseFloat(v('pr-freq'))||null,consommable:v('pr-conso'),prevision:v('pr-prev'),responsable:re,codeResp:parseInt(v('pr-codeResp'))||null};
     sheet='processus'; store.processus.push(data);
   }
-  else if(form==='ma'){
-    const m=v('ma-machine'),ui=v('ma-ui'),ca=v('ma-codeAction');
-    if(!m||!ui||!ca){toast('Champs obligatoires manquants.','error');return;}
-    const sel=document.getElementById('ma-action');
-    data={date:v('ma-date'),machine:m,ui,action:sel.options[sel.selectedIndex]?.textContent||'',codeAction:ca,next:v('ma-next'),poste:v('ma-poste'),responsable:v('ma-nom'),obs:v('ma-obs'),codeInt:v('ma-codeInt')};
-    sheet='maintenance'; store.maintenance.push(data);
-  }
+  // ma handled separately via submitMaintenance()
 
   if(cfg[sheet]){
     showSync(true);
@@ -711,10 +850,69 @@ async function submit(form) {
   render(sheet,store[sheet]);
 }
 
+async function submitMaintenance() {
+  const m    = v('ma-machine');
+  const ui   = v('ma-ui');
+  const date = v('ma-date');
+  if (!m || !ui) { toast('Sélectionnez une machine et une unité.', 'error'); return; }
+
+  const rows = document.querySelectorAll('#ma-edit-tbody tr');
+  if (!rows.length) { toast('Aucune action dans le tableau.', 'error'); return; }
+
+  const entries = [];
+  rows.forEach(row => {
+    const cells   = row.querySelectorAll('td');
+    const ca      = row.dataset.ca;
+    const proc    = store.processus.find(p => p.codeAction === ca) || {};
+    const next    = cells[2].querySelector('input').value;
+    const poste   = cells[3].querySelector('select').value;
+    const nom     = cells[4].querySelector('select').value;
+    const obs     = cells[5].querySelector('input').value;
+    const codeInt = cells[6].textContent.trim();
+    entries.push({
+      date, machine:m, ui,
+      action: proc.actions || ca,
+      codeAction: ca,
+      next, poste,
+      responsable: nom,
+      obs, codeInt
+    });
+  });
+
+  let saved = 0, errors = 0;
+  showSync(true);
+  for (const entry of entries) {
+    if (cfg.maintenance) {
+      const res = await apiPost('maintenance', entry);
+      res.ok ? saved++ : errors++;
+    } else {
+      saved++;
+    }
+    store.maintenance.push(entry);
+  }
+  showSync(false);
+
+  if (errors === 0) {
+    toast(`${saved} intervention(s) enregistrée(s) ✓`, 'success');
+  } else {
+    toast(`${saved} enregistrée(s), ${errors} erreur(s).`, 'info');
+  }
+  clearForm('ma');
+  render('maintenance', store.maintenance);
+}
+
 function clearForm(form){
-  const map={eq:['eq-machine','eq-code'],un:['un-machine','un-ui','un-codeEqpt','un-codeUI'],pr:['pr-machine','pr-ui','pr-codeUI','pr-codeAction','pr-actions','pr-freq','pr-conso','pr-prev','pr-resp','pr-codeResp'],ma:['ma-machine','ma-ui','ma-action','ma-codeAction','ma-next','ma-poste','ma-nom','ma-obs','ma-codeInt']};
+  const map={eq:['eq-machine','eq-code'],un:['un-machine','un-ui','un-codeEqpt','un-codeUI'],pr:['pr-machine','pr-ui','pr-codeUI','pr-codeAction','pr-actions','pr-freq','pr-conso','pr-prev','pr-resp','pr-codeResp'],ma:['ma-machine','ma-ui']};
   (map[form]||[]).forEach(id=>{const el=document.getElementById(id);if(!el)return;el.tagName==='SELECT'?el.selectedIndex=0:el.value='';});
-  if(form==='ma') set('ma-date', today());
+  if(form==='ma') {
+    set('ma-date', today());
+    document.getElementById('ma-actions-zone').style.display = 'none';
+    document.getElementById('ma-table-zone').style.display   = 'none';
+    document.getElementById('ma-submit-bar').style.display   = 'none';
+    document.getElementById('ma-checklist').innerHTML = '';
+    const tb = document.getElementById('ma-edit-tbody');
+    if(tb) tb.innerHTML = '';
+  }
 }
 
 // ============================================================
@@ -733,7 +931,7 @@ function addPersonnel(){
 // TEST URL
 // ============================================================
 async function testURL(sheet){
-  const url=document.getElementById('url-'+sheet)?.value.trim();
+  const el0=document.getElementById('url-'+sheet); const url=el0?el0.value.trim():'';
   const el=document.getElementById('tr-'+sheet);
   if(!url){if(el){el.textContent='⚠ URL vide';el.style.color='var(--orange)';}return;}
   if(el){el.textContent='⌛';el.style.color='var(--muted)';}
@@ -809,7 +1007,7 @@ function showLoader(on, msg) {
       if (!document.getElementById('spin-style')) {
         const s = document.createElement('style');
         s.id = 'spin-style';
-        s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+        s.textContent = '@keyframes spin{to{transform:rotate(360deg)}};';
         document.head.appendChild(s);
       }
     }
