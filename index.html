@@ -556,20 +556,18 @@ async function apiPost(sheet, data) {
   const url = cfg[sheet];
   if (!url || !url.trim()) return {ok: false, error: 'no_url'};
   try {
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({sheet, data})
-    });
+    // Google Apps Script ne supporte pas CORS avec Content-Type: application/json
+    // On passe les données en paramètre GET (méthode compatible CORS)
+    const payload = encodeURIComponent(JSON.stringify(data));
+    const fullUrl = url + '?action=write&sheet=' + encodeURIComponent(sheet) + '&data=' + payload;
+    const r = await fetch(fullUrl, {method: 'GET'});
     if (!r.ok) return {ok: false, error: 'http_' + r.status};
-    // Apps Script peut retourner du texte ou du JSON
     const text = await r.text();
     try {
       const json = JSON.parse(text);
       return json;
     } catch(e) {
-      // Si la réponse n'est pas du JSON valide mais que le HTTP est OK
-      return {ok: true};
+      return {ok: true}; // HTTP 200 mais pas de JSON = succès Apps Script
     }
   } catch(e) {
     console.warn('apiPost error:', e);
