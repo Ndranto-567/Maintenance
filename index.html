@@ -553,11 +553,28 @@ async function apiGet(sheet) {
 }
 
 async function apiPost(sheet, data) {
-  const url = cfg[sheet]; if(!url) return {ok:false};
+  const url = cfg[sheet];
+  if (!url || !url.trim()) return {ok: false, error: 'no_url'};
   try {
-    const r = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sheet,data})});
-    return r.ok ? await r.json() : {ok:false};
-  } catch(e) { return {ok:false}; }
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({sheet, data})
+    });
+    if (!r.ok) return {ok: false, error: 'http_' + r.status};
+    // Apps Script peut retourner du texte ou du JSON
+    const text = await r.text();
+    try {
+      const json = JSON.parse(text);
+      return json;
+    } catch(e) {
+      // Si la réponse n'est pas du JSON valide mais que le HTTP est OK
+      return {ok: true};
+    }
+  } catch(e) {
+    console.warn('apiPost error:', e);
+    return {ok: false, error: e.message};
+  }
 }
 
 async function loadData(sheet) {
@@ -880,22 +897,38 @@ async function submitMaintenance() {
   });
 
   let saved = 0, errors = 0;
+  const hasURL = cfg.maintenance && cfg.maintenance.trim() !== '';
   showSync(true);
+
   for (const entry of entries) {
-    if (cfg.maintenance) {
-      const res = await apiPost('maintenance', entry);
-      res.ok ? saved++ : errors++;
+    // Toujours sauvegarder en local d'abord
+    store.maintenance.push(entry);
+
+    if (hasURL) {
+      try {
+        const res = await apiPost('maintenance', entry);
+        if (res && res.ok) {
+          saved++;
+        } else {
+          errors++;
+          console.warn('Erreur envoi Sheets pour', entry.codeInt, res);
+        }
+      } catch(e) {
+        errors++;
+        console.warn('Exception envoi:', e);
+      }
     } else {
       saved++;
     }
-    store.maintenance.push(entry);
   }
   showSync(false);
 
-  if (errors === 0) {
-    toast(`${saved} intervention(s) enregistrée(s) ✓`, 'success');
+  if (!hasURL) {
+    toast(saved + ' intervention(s) sauvegardée(s) localement (aucune URL configurée).', 'info');
+  } else if (errors === 0) {
+    toast(saved + ' intervention(s) enregistrée(s) dans Google Sheets ✓', 'success');
   } else {
-    toast(`${saved} enregistrée(s), ${errors} erreur(s).`, 'info');
+    toast(saved + ' enregistrée(s) localement, ' + errors + ' erreur(s) Sheets.', 'info');
   }
   clearForm('ma');
   render('maintenance', store.maintenance);
