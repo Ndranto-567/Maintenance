@@ -286,6 +286,11 @@ ol.steps{padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex
         <p class="fhint">0.5=semestriel · 1=annuel · 12=mensuel</p>
       </div>
       <div>
+        <label class="flabel">Répétition (jours)</label>
+        <input id="pr-repet" class="finput" type="number" step="1" min="0" placeholder="ex: 180">
+        <p class="fhint">Intervalle en jours pour la prochaine intervention. Vide = pas de répétition.</p>
+      </div>
+      <div>
         <label class="flabel">Consommable</label>
         <input id="pr-conso" class="finput" placeholder="Pièces ou produits">
       </div>
@@ -317,7 +322,7 @@ ol.steps{padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex
         <button class="btn btn-outline btn-sm" onclick="loadData('processus')">↻</button>
       </div>
     </div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code UI</th><th>Code Action</th><th>Machine</th><th>Unité</th><th>Actions</th><th>Fréq/an</th><th>Consommable</th><th>Prévision</th><th>Responsable</th></tr></thead>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code UI</th><th>Code Action</th><th>Machine</th><th>Unité</th><th>Actions</th><th>Fréq/an</th><th>Répét. (j)</th><th>Consommable</th><th>Prévision</th><th>Responsable</th></tr></thead>
     <tbody id="tb-processus"><tr class="empty-row"><td colspan="9">Chargement...</td></tr></tbody></table></div>
   </div>
 </div>
@@ -373,6 +378,7 @@ ol.steps{padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex
               <th style="min-width:110px">Prochaine intervention</th>
               <th style="min-width:160px">Poste Responsable</th>
               <th style="min-width:160px">Nom Responsable</th>
+              <th style="min-width:140px">Quantité utilisée</th>
               <th style="min-width:200px">Observation</th>
               <th style="min-width:160px">Code Intervention</th>
               <th style="width:40px"></th>
@@ -397,8 +403,8 @@ ol.steps{padding-left:18px;color:var(--muted);font-size:13.5px;display:flex;flex
         <button class="btn btn-outline btn-sm" onclick="loadData('maintenance')">↻</button>
       </div>
     </div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code Intervention</th><th>Date</th><th>Machine</th><th>Unité</th><th>Action</th><th>Prochaine</th><th>Poste</th><th>Responsable</th><th>Obs.</th></tr></thead>
-    <tbody id="tb-maintenance"><tr class="empty-row"><td colspan="9">Aucune intervention.</td></tr></tbody></table></div>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code Intervention</th><th>Date</th><th>Machine</th><th>Unité</th><th>Action</th><th>Prochaine</th><th>Poste</th><th>Responsable</th><th>Qté</th><th>Obs.</th></tr></thead>
+    <tbody id="tb-maintenance"><tr class="empty-row"><td colspan="10">Aucune intervention.</td></tr></tbody></table></div>
   </div>
 </div>
 
@@ -595,14 +601,14 @@ async function loadData(sheet) {
 const RENDERS = {
   equipement:  r=>`<td><code>${r.code||''}</code></td><td>${r.machine||''}</td>`,
   unite:       r=>`<td>${r.machine||''}</td><td>${r.ui||''}</td><td><code>${r.codeEqpt||''}</code></td><td><code>${r.codeUI||''}</code></td>`,
-  processus:   r=>`<td><code>${r.codeUI||''}</code></td><td><code>${r.codeAction||''}</code></td><td>${r.machine||''}</td><td>${r.ui||''}</td><td class="cell-act">${(r.actions||'').substring(0,90)}</td><td>${r.freq!=null?r.freq:''}</td><td>${r.consommable||''}</td><td>${r.prevision||''}</td><td>${r.responsable||''}</td>`,
-  maintenance: r=>`<td><code>${r.codeInt||''}</code></td><td>${r.date||''}</td><td>${r.machine||''}</td><td>${r.ui||''}</td><td class="cell-act">${(r.action||'').substring(0,60)}</td><td>${r.next||''}</td><td>${r.poste||''}</td><td>${r.responsable||''}</td><td>${r.obs||''}</td>`
+  processus:   r=>`<td><code>${r.codeUI||''}</code></td><td><code>${r.codeAction||''}</code></td><td>${r.machine||''}</td><td>${r.ui||''}</td><td class="cell-act">${(r.actions||'').substring(0,90)}</td><td>${r.freq!=null?r.freq:''}</td><td>${r.repet!=null&&r.repet!==''?r.repet:''}</td><td>${r.consommable||''}</td><td>${r.prevision||''}</td><td>${r.responsable||''}</td>`,
+  maintenance: r=>`<td><code>${r.codeInt||''}</code></td><td>${r.date||''}</td><td>${r.machine||''}</td><td>${r.ui||''}</td><td class="cell-act">${(r.action||'').substring(0,60)}</td><td>${r.next||''}</td><td>${r.poste||''}</td><td>${r.responsable||''}</td><td>${r.qte||''}</td><td>${r.obs||''}</td>`
 };
 
 function render(sheet, data) {
   const tb = document.getElementById('tb-'+sheet); if(!tb) return;
   if(!data||!data.length) {
-    const cols = {equipement:2,unite:4,processus:9,maintenance:8}[sheet]||4;
+    const cols = {equipement:2,unite:4,processus:10,maintenance:10}[sheet]||4;
     tb.innerHTML=`<tr class="empty-row"><td colspan="${cols}">Aucune donnée.</td></tr>`; return;
   }
   tb.innerHTML = data.map(r=>`<tr>${RENDERS[sheet](r)}</tr>`).join('');
@@ -752,7 +758,7 @@ function maGenerateTable() {
   if (!checked.length) { toast('Sélectionnez au moins une action.', 'error'); return; }
 
   const tbody = document.getElementById('ma-edit-tbody');
-  const date  = v('ma-date');
+  const date  = v('ma-date');               // ex: 2026-06-15 (input type=date)
   const ds    = date.replace(/-/g,'');
 
   // Build personnel options HTML
@@ -763,16 +769,11 @@ function maGenerateTable() {
     const ca   = cb.value;
     const proc = store.processus.find(p => p.codeAction === ca) || {};
 
-    // Calculate next date
-    let nextDate = '';
-    if (proc.freq && proc.freq > 0) {
-      const d = new Date();
-      d.setDate(d.getDate() + Math.round(365 / proc.freq));
-      nextDate = d.toLocaleDateString('fr-FR');
-    }
+    // Prochaine intervention = Date d'intervention + Répétition (jours)
+    // Si pas de répétition définie -> reprend la date du jour de l'intervention
+    const nextDate = computeNextDate(date, proc.repet);
 
-    const defaultPoste = proc.responsable || '';
-    const codeInt = ds ? ds + '_' + ca : ca;
+    const codeInt     = ds ? ds + '_' + ca : ca;
     const actionLabel = (proc.actions||'').substring(0,60);
 
     return `<tr data-ca="${ca}">
@@ -790,6 +791,7 @@ function maGenerateTable() {
           <option value="">— Nom —</option>
         </select>
       </td>
+      <td><input class="td-input" placeholder="Ex: 2 L, 3 pièces..." style="width:100%"></td>
       <td><input class="td-input" placeholder="Observation..." style="width:100%"></td>
       <td><span class="td-auto">${codeInt}</span></td>
       <td><button class="btn-del" onclick="this.closest('tr').remove()" title="Supprimer">✕</button></td>
@@ -811,6 +813,23 @@ function maGenerateTable() {
   document.getElementById('ma-table-zone').style.display  = 'block';
   document.getElementById('ma-submit-bar').style.display  = 'flex';
   document.getElementById('ma-actions-zone').style.display = 'none';
+}
+
+// Calcule la date de prochaine intervention :
+// - Si repet (jours) est défini et > 0  -> dateIntervention + repet jours
+// - Sinon                                -> reprend la date d'intervention elle-même
+function computeNextDate(dateStr, repetJours) {
+  if (!dateStr) return '';
+  const base = new Date(dateStr + 'T00:00:00');
+  if (isNaN(base.getTime())) return '';
+
+  if (repetJours && Number(repetJours) > 0) {
+    const d = new Date(base.getTime());
+    d.setDate(d.getDate() + Number(repetJours));
+    return d.toLocaleDateString('fr-FR');
+  }
+  // Pas de répétition définie -> date du jour de l'intervention
+  return base.toLocaleDateString('fr-FR');
 }
 
 function maRowPosteChange(sel) {
@@ -848,7 +867,7 @@ async function submit(form) {
   else if(form==='pr'){
     const m=v('pr-machine'),ui=v('pr-ui'),ac=v('pr-actions').trim(),re=v('pr-resp');
     if(!m||!ui||!ac||!re){toast('Champs obligatoires manquants.','error');return;}
-    data={codeUI:v('pr-codeUI'),codeAction:v('pr-codeAction'),machine:m,ui,actions:ac,freq:parseFloat(v('pr-freq'))||null,consommable:v('pr-conso'),prevision:v('pr-prev'),responsable:re,codeResp:parseInt(v('pr-codeResp'))||null};
+    data={codeUI:v('pr-codeUI'),codeAction:v('pr-codeAction'),machine:m,ui,actions:ac,freq:parseFloat(v('pr-freq'))||null,repet:parseInt(v('pr-repet'))||null,consommable:v('pr-conso'),prevision:v('pr-prev'),responsable:re,codeResp:parseInt(v('pr-codeResp'))||null};
     sheet='processus'; store.processus.push(data);
   }
   // ma handled separately via submitMaintenance()
@@ -882,15 +901,16 @@ async function submitMaintenance() {
     const next    = cells[2].querySelector('input').value;
     const poste   = cells[3].querySelector('select').value;
     const nom     = cells[4].querySelector('select').value;
-    const obs     = cells[5].querySelector('input').value;
-    const codeInt = cells[6].textContent.trim();
+    const qte     = cells[5].querySelector('input').value;
+    const obs     = cells[6].querySelector('input').value;
+    const codeInt = cells[7].textContent.trim();
     entries.push({
       date, machine:m, ui,
       action: proc.actions || ca,
       codeAction: ca,
       next, poste,
       responsable: nom,
-      obs, codeInt
+      qte, obs, codeInt
     });
   });
 
@@ -933,7 +953,7 @@ async function submitMaintenance() {
 }
 
 function clearForm(form){
-  const map={eq:['eq-machine','eq-code'],un:['un-machine','un-ui','un-codeEqpt','un-codeUI'],pr:['pr-machine','pr-ui','pr-codeUI','pr-codeAction','pr-actions','pr-freq','pr-conso','pr-prev','pr-resp','pr-codeResp'],ma:['ma-machine','ma-ui']};
+  const map={eq:['eq-machine','eq-code'],un:['un-machine','un-ui','un-codeEqpt','un-codeUI'],pr:['pr-machine','pr-ui','pr-codeUI','pr-codeAction','pr-actions','pr-freq','pr-repet','pr-conso','pr-prev','pr-resp','pr-codeResp'],ma:['ma-machine','ma-ui']};
   (map[form]||[]).forEach(id=>{const el=document.getElementById(id);if(!el)return;el.tagName==='SELECT'?el.selectedIndex=0:el.value='';});
   if(form==='ma') {
     set('ma-date', today());
