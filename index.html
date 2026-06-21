@@ -1736,7 +1736,6 @@ async function submitMaintenance() {
   const rows=document.querySelectorAll('#ma-edit-tbody tr');
   if(!rows.length){toast('Aucune action dans le tableau.','error');return;}
 
-  const found=store.unite.find(u=>u.machine===m&&u.spec===spec)||{};
   const entries=[];
   rows.forEach(row=>{
     var ca=row.dataset.ca;
