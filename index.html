@@ -839,15 +839,25 @@ async function apiGet(sheet) {
 }
 
 async function apiPost(sheet,data) {
-  const url=cfg[sheet]; if(!url||!url.trim()) return {ok:false};
+  const url=cfg[sheet]; if(!url||!url.trim()) return {ok:false,error:'no_url'};
   try {
     const payload=encodeURIComponent(JSON.stringify(data));
     const fullUrl=url+'?action=write&sheet='+encodeURIComponent(sheet)+'&data='+payload;
+    console.log('POST URL length:', fullUrl.length);
+    console.log('POST data:', JSON.stringify(data));
     const r=await fetch(fullUrl,{method:'GET'});
-    if(!r.ok) return {ok:false};
     const text=await r.text();
-    try { return JSON.parse(text); } catch(e){ return {ok:true}; }
-  } catch(e){ return {ok:false}; }
+    console.log('POST response status:', r.status, 'body:', text.substring(0,200));
+    if(!r.ok) return {ok:false,error:'http_'+r.status};
+    try {
+      const json=JSON.parse(text);
+      if(json.error) console.error('Apps Script error:', json.error);
+      return json;
+    } catch(e){ return {ok:true}; }
+  } catch(e){
+    console.error('apiPost exception:', e.message);
+    return {ok:false,error:e.message};
+  }
 }
 
 async function loadData(sheet) {
@@ -1712,7 +1722,7 @@ async function submitF(form) {
     showSync(true);
     const res=await apiPost(sheet,data);
     showSync(false);
-    toast(res.ok?'Enregistré dans Google Sheets ✓':'Sauvegardé localement.',res.ok?'success':'info');
+    toast(res.ok?'Enregistré dans Google Sheets ✓':'Erreur: '+(res.error||'voir console F12'),res.ok?'success':'error');
   } else {
     toast('Sauvegardé localement.','info');
   }
@@ -1761,7 +1771,7 @@ async function submitMaintenance() {
   showSync(false);
   if(!hasURL) toast(saved+' intervention(s) sauvegardée(s) localement.','info');
   else if(!errors) toast(saved+' intervention(s) enregistrée(s) dans Google Sheets ✓','success');
-  else toast(saved+' enregistrée(s), '+errors+' erreur(s) Sheets.','info');
+  else toast(saved+' sauvegardée(s) localement, '+errors+' erreur(s) — voir console F12','error');
   clearF('ma');
   renderTbl('maintenance',store.maintenance);
 }
