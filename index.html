@@ -34,30 +34,33 @@ nav{padding:10px 8px;flex:1;overflow-y:auto}
 .sync{font-size:12px;color:var(--accent)}
 .menu-btn{display:none;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
 /* PAGES */
-.page{display:none;padding:22px 26px;max-width:1300px}
-.page.active{display:block}
-.page-hd{margin-bottom:18px}
-.page-hd h1{font-size:19px;font-weight:700;margin-bottom:3px}
-.page-hd p{color:var(--muted);font-size:13px}
+.page{display:none;flex-direction:column;height:calc(100vh - 50px);overflow:hidden;max-width:1300px;width:100%}
+.page.active{display:flex}
+.page-hd{padding:10px 18px 0;flex-shrink:0}
+.page-hd h1{font-size:15px;font-weight:700;margin-bottom:1px}
+.page-hd p{color:var(--muted);font-size:11.5px;margin-bottom:4px}
+.page-form{flex-shrink:0;padding:8px 18px 6px;border-bottom:1px solid var(--border)}
+.page-data{flex:1;overflow-y:auto;padding:10px 18px}
 /* CARD */
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:22px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px 8px;margin-bottom:0}
 /* GRID */
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
-.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px}
+.fgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;margin-bottom:10px}
+.fgrid3{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 12px;margin-bottom:10px}
 .f-full{grid-column:1/-1}
-.flabel{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:4px}
+.f-2{grid-column:span 2}
+.flabel{display:block;font-size:11px;font-weight:500;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .req{color:var(--orange)}
-.finput,.fsel,.ftxt{width:100%;background:#0a0c14;border:1px solid var(--border);border-radius:6px;color:#e2e8f0;font-family:inherit;font-size:13px;padding:7px 10px;transition:.15s}
-.finput:focus,.fsel:focus,.ftxt:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
-.finput.auto{color:var(--muted);background:#070810;font-family:var(--mono);font-size:11.5px}
-.ftxt{resize:vertical;min-height:68px}
+.finput,.fsel{width:100%;background:#0a0c14;border:1px solid var(--border);border-radius:5px;color:#e2e8f0;font-family:inherit;font-size:12.5px;padding:5px 8px;transition:.15s;height:30px}
+.ftxt{width:100%;background:#0a0c14;border:1px solid var(--border);border-radius:5px;color:#e2e8f0;font-family:inherit;font-size:12.5px;padding:5px 8px;transition:.15s;resize:vertical;min-height:56px}
+.finput:focus,.fsel:focus,.ftxt:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(59,130,246,.1)}
+.finput.auto{color:var(--muted);background:#070810;font-family:var(--mono);font-size:11px}
 .fsel option{background:var(--card)}
-.fhint{font-size:11px;color:#475569;margin-top:2px}
-.auto-badge{display:inline-block;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--accent);border-radius:4px;font-size:10px;font-weight:600;padding:1px 5px;margin-top:2px}
-.frow{display:flex;gap:7px;align-items:flex-end}
+.fhint{font-size:10px;color:#475569;margin-top:1px}
+.auto-badge{display:inline-block;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);color:var(--accent);border-radius:3px;font-size:9px;font-weight:600;padding:0px 4px;margin-top:1px}
+.frow{display:flex;gap:6px;align-items:flex-end}
 .frow .fsel{flex:1}
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:.15s}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:5px;font-family:inherit;font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:.15s}
 .btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
 .btn-primary:hover{background:#2563eb}
 .btn-secondary{background:transparent;color:var(--muted);border-color:var(--border)}
@@ -67,11 +70,11 @@ nav{padding:10px 8px;flex:1;overflow-y:auto}
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn-icon{width:34px;height:34px;background:#0a0c14;border:1px solid var(--border);border-radius:6px;color:var(--accent);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
 .btn-icon:hover{background:rgba(59,130,246,.1);border-color:var(--accent)}
-.form-actions{display:flex;justify-content:flex-end;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
+.form-actions{display:flex;justify-content:flex-end;gap:6px;padding-top:7px;border-top:1px solid var(--border);margin-top:4px}
 /* TABLE */
 .data-sec{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.data-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
-.data-hd h2{font-size:13.5px;font-weight:600}
+.data-hd{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--border)}
+.data-hd h2{font-size:12.5px;font-weight:600}
 .data-controls{display:flex;gap:8px;align-items:center}
 .search{background:#0a0c14;border:1px solid var(--border);border-radius:6px;color:#e2e8f0;font-size:12.5px;padding:6px 10px;width:160px}
 .search:focus{outline:none;border-color:var(--accent)}
@@ -153,9 +156,10 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
     <div class="nav-item" data-page="pu">💰 PU Consommables</div>
     <div class="nav-sep"></div>
     <div class="nav-lbl">Équipements</div>
-    <div class="nav-item" data-page="equipement">🔧 Liste Équipement</div>
-    <div class="nav-item" data-page="unite">🏷 Unité d'Intervention</div>
-    <div class="nav-item" data-page="processus">📋 Processus</div>
+    <div class="nav-item" data-page="equipement">🔧 Liste Voiture/Machine/Équipement</div>
+    <div class="nav-item" data-page="unite">🏷 Spécification V/M/É</div>
+    <div class="nav-item" data-page="procglob">📗 Processus Global</div>
+    <div class="nav-item" data-page="processus">📋 Processus Détail</div>
     <div class="nav-sep"></div>
     <div class="nav-lbl">Saisie</div>
     <div class="nav-item" data-page="maintenance">🛠 Maintenance</div>
@@ -171,11 +175,12 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
   <div class="topbar-title" id="topTitle">Localisation</div>
   <span class="sync" id="sync" style="display:none">↻ Sync...</span>
 </header>
-<div id="pages">
+<div id="pages" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
 
 <!-- ===== LOCALISATION ===== -->
 <div class="page active" id="page-localisation">
   <div class="page-hd"><h1>Base Localisation</h1><p>Sites et lieux des équipements.</p></div>
+<div class="page-form">
   <div class="card">
     <div class="fgrid">
       <div>
@@ -193,7 +198,8 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       <button class="btn btn-primary" onclick="submitF('loc')">Enregistrer</button>
     </div>
   </div>
-  <div class="data-sec">
+  </div>
+<div class="page-data"><div class="data-sec">
     <div class="data-hd"><h2>Localisations</h2>
       <div class="data-controls">
         <input class="search" placeholder="Rechercher..." oninput="filterTbl('localisation',this.value)">
@@ -206,10 +212,11 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
 </div>
 
 <!-- ===== PERSONNEL ===== -->
-<div class="page" id="page-personnel">
+</div><div class="page" id="page-personnel">
   <div class="page-hd"><h1>Personnel Maintenance</h1><p>Gestion des agents et responsables.</p></div>
+<div class="page-form">
   <div class="card">
-    <div class="fgrid3">
+    <div class="fgrid">
       <div>
         <label class="flabel">Immatricule <span class="req">*</span></label>
         <input id="per-immat" class="finput" placeholder="ex: A, B, C...">
@@ -224,7 +231,8 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       </div>
       <div>
         <label class="flabel">Entité responsable</label>
-        <input id="per-entite" class="finput" placeholder="ex: Maintenance interne">
+        <input id="per-entite" class="finput" placeholder="ex: Maintenance interne" list="entite-list" autocomplete="off">
+        <datalist id="entite-list"></datalist>
       </div>
       <div>
         <label class="flabel">Code Poste</label>
@@ -242,7 +250,8 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       <button class="btn btn-primary" onclick="submitF('per')">Enregistrer</button>
     </div>
   </div>
-  <div class="data-sec">
+  </div>
+<div class="page-data"><div class="data-sec">
     <div class="data-hd"><h2>Personnel</h2>
       <div class="data-controls">
         <input class="search" placeholder="Rechercher..." oninput="filterTbl('personnel',this.value)">
@@ -255,11 +264,12 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
 </div>
 
 <!-- ===== CONSOMMABLE ===== -->
-<div class="page" id="page-consommable">
+</div><div class="page" id="page-consommable">
   <div class="page-hd"><h1>Base Consommable</h1><p>Pièces, produits et prestations utilisés en maintenance.</p></div>
+<div class="page-form">
   <div class="card">
     <div class="fgrid">
-      <div>
+      <div class="f-2">
         <label class="flabel">Catégorie <span class="req">*</span></label>
         <select id="conso-cat" class="fsel" onchange="genConsoCode()">
           <option value="">— Sélectionner —</option>
@@ -277,14 +287,13 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
           <option>EPI</option>
         </select>
       </div>
-      <div>
+      <div class="f-2">
         <label class="flabel">Désignation <span class="req">*</span></label>
         <input id="conso-desig" class="finput" placeholder="Nom du consommable" oninput="genConsoCode()">
       </div>
-      <div>
+      <div class="f-2">
         <label class="flabel">Code Consommable</label>
         <input id="conso-code" class="finput auto" readonly placeholder="Auto">
-        <p class="fhint">2 lettres catégorie + 4 lettres désignation + _N</p>
         <span class="auto-badge">Auto</span>
       </div>
 
@@ -294,10 +303,14 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       <button class="btn btn-primary" onclick="submitF('conso')">Enregistrer</button>
     </div>
   </div>
-  <div class="data-sec">
+  </div>
+<div class="page-data"><div class="data-sec">
     <div class="data-hd"><h2>Consommables</h2>
       <div class="data-controls">
-        <input class="search" placeholder="Rechercher..." oninput="filterTbl('consommable',this.value)">
+        <select id="filter-conso-cat" class="search" style="width:180px" onchange="filterConsommable()">
+          <option value="">— Toutes catégories —</option>
+        </select>
+        <input class="search" id="search-conso" placeholder="Rechercher..." oninput="filterConsommable()">
         <button class="btn btn-outline btn-sm" onclick="loadData('consommable')">↻</button>
       </div>
     </div>
@@ -308,8 +321,9 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
 
 
 <!-- ===== PU CONSOMMABLE ===== -->
-<div class="page" id="page-pu">
+</div><div class="page" id="page-pu">
   <div class="page-hd"><h1>Prix Unitaires Consommables</h1><p>Historique des prix par année.</p></div>
+<div class="page-form">
   <div class="card">
     <div class="fgrid">
       <div>
@@ -320,13 +334,11 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       </div>
       <div>
         <label class="flabel">Code Consommable</label>
-        <input id="pu-code" class="finput auto" readonly placeholder="Auto">
-        <span class="auto-badge">Auto</span>
+        <div id="pu-code" style="font-family:var(--mono);font-size:12px;color:var(--accent);padding:8px 0;min-height:22px">—</div>
       </div>
       <div>
         <label class="flabel">Catégorie</label>
-        <input id="pu-cat" class="finput auto" readonly placeholder="Auto">
-        <span class="auto-badge">Auto</span>
+        <div id="pu-cat" style="font-size:12.5px;color:var(--muted);padding:8px 0;min-height:22px">—</div>
       </div>
       <div>
         <label class="flabel">Année <span class="req">*</span></label>
@@ -342,7 +354,8 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       <button class="btn btn-primary" onclick="submitF('pu')">Enregistrer</button>
     </div>
   </div>
-  <div class="data-sec">
+  </div>
+<div class="page-data"><div class="data-sec">
     <div class="data-hd"><h2>Prix unitaires enregistrés</h2>
       <div class="data-controls">
         <input class="search" placeholder="Rechercher..." oninput="filterTbl('pu',this.value)">
@@ -357,12 +370,13 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
 </div>
 
 <!-- ===== EQUIPEMENT ===== -->
-<div class="page" id="page-equipement">
-  <div class="page-hd"><h1>Liste Équipement</h1><p>Catégories de machines et matériels.</p></div>
+</div><div class="page" id="page-equipement">
+  <div class="page-hd"><h1>Liste Voiture/Machine/Équipement</h1><p>Catégories de véhicules, machines et matériels.</p></div>
+<div class="page-form">
   <div class="card">
     <div class="fgrid">
       <div>
-        <label class="flabel">Machine / Matériel <span class="req">*</span></label>
+        <label class="flabel">Voiture/Machine/Équipement <span class="req">*</span></label>
         <input id="eq-machine" class="finput" placeholder="ex: CAMION, MOTO..." oninput="genEqCode()">
       </div>
       <div>
@@ -377,25 +391,27 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       <button class="btn btn-primary" onclick="submitF('eq')">Enregistrer</button>
     </div>
   </div>
-  <div class="data-sec">
+  </div>
+<div class="page-data"><div class="data-sec">
     <div class="data-hd"><h2>Équipements</h2>
       <div class="data-controls">
         <input class="search" placeholder="Rechercher..." oninput="filterTbl('equipement',this.value)">
         <button class="btn btn-outline btn-sm" onclick="loadData('equipement')">↻</button>
       </div>
     </div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code</th><th>Machine / Matériel</th></tr></thead>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Code</th><th>Voiture/Machine/Équipement</th></tr></thead>
     <tbody id="tb-equipement"></tbody></table></div>
   </div>
 </div>
 
 <!-- ===== UNITE D'INTERVENTION ===== -->
-<div class="page" id="page-unite">
-  <div class="page-hd"><h1>Unité d'Intervention</h1><p>Spécifications détaillées de chaque équipement.<br><small style="color:var(--muted)">Code UI = Code Équipement + _ + 4 derniers caractères de la spécification</small></p></div>
+</div><div class="page" id="page-unite">
+  <div class="page-hd"><h1>Spécification Voiture/Machine/Équipement</h1><p>Spécifications détaillées.<br><small style="color:var(--muted)">Code Spec = Code Équipement + _ + 4 derniers caractères de la spécification</small></p></div>
+<div class="page-form">
   <div class="card">
     <div class="fgrid">
       <div>
-        <label class="flabel">Machine / Matériel <span class="req">*</span></label>
+        <label class="flabel">Voiture/Machine/Éqpt <span class="req">*</span></label>
         <select id="un-machine" class="fsel" onchange="onUnMachine()">
           <option value="">— Sélectionner —</option>
         </select>
@@ -405,14 +421,13 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
         <input id="un-codeEqpt" class="finput auto" readonly placeholder="Auto">
         <span class="auto-badge">Auto</span>
       </div>
-      <div class="f-full">
+      <div class="f-2">
         <label class="flabel">Spécification <span class="req">*</span></label>
         <input id="un-spec" class="finput" placeholder="ex: CAMION JMC 3437 TBG" oninput="genUnCode()">
       </div>
-      <div>
-        <label class="flabel">Code UI</label>
+      <div class="f-2">
+        <label class="flabel">Code Spec</label>
         <input id="un-codeUI" class="finput auto" readonly placeholder="CodeEqpt + _ + 4 derniers car.">
-        <p class="fhint">ex: CAMION_ TBG</p>
         <span class="auto-badge">Auto</span>
       </div>
     </div>
@@ -421,72 +436,119 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       <button class="btn btn-primary" onclick="submitF('un')">Enregistrer</button>
     </div>
   </div>
-  <div class="data-sec">
-    <div class="data-hd"><h2>Unités d'intervention</h2>
+  </div>
+<div class="page-data"><div class="data-sec">
+    <div class="data-hd"><h2>Spécifications</h2>
       <div class="data-controls">
-        <input class="search" placeholder="Rechercher..." oninput="filterTbl('unite',this.value)">
+        <select id="filter-unite-machine" class="search" style="width:160px" onchange="filterUnite()">
+          <option value="">— Toutes —</option>
+        </select>
+        <input class="search" id="search-unite" placeholder="Rechercher..." oninput="filterUnite()">
         <button class="btn btn-outline btn-sm" onclick="loadData('unite')">↻</button>
       </div>
     </div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Machine</th><th>Spécification</th><th>Code Eqpt</th><th>Code UI</th></tr></thead>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Voiture/Machine/Éqpt</th><th>Spécification</th><th>Code Eqpt</th><th>Code Spec</th></tr></thead>
     <tbody id="tb-unite"></tbody></table></div>
   </div>
 </div>
 
-<!-- ===== PROCESSUS ===== -->
-<div class="page" id="page-processus">
-  <div class="page-hd"><h1>Processus de Maintenance</h1><p>Actions préventives par unité.<br><small style="color:var(--muted)">Code Action = Code UI + numéro 2 chiffres (ex: CAMION_ TBG01)</small></p></div>
+<!-- ===== PROCESSUS GLOBAL ===== -->
+<div class="page" id="page-procglob">
+  <div class="page-hd">
+    <h1>Processus Global</h1>
+    <p>Actions génériques par catégorie Matériel/Équipement — catalogue de référence.</p>
+  </div>
+  <div class="page-form">
   <div class="card">
-    <div class="fgrid3">
+    <div class="fgrid">
+      <div>
+        <label class="flabel">Machine/Éqpt <span class="req">*</span></label>
+        <select id="pg-machine" class="fsel" onchange="onPgMachine()"><option value="">— Sélectionner —</option></select>
+      </div>
+      <div>
+        <label class="flabel">Code Global</label>
+        <div id="pg-codeGlob" style="font-family:var(--mono);font-size:11px;color:var(--accent);padding:5px 0;line-height:20px">—</div>
+      </div>
+      <div class="f-2">
+        <label class="flabel">Action générique <span class="req">*</span></label>
+        <input id="pg-action" class="finput" placeholder="ex: Vidange moteur, Changement filtre à huile...">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="clearF('pg')">Annuler</button>
+      <button class="btn btn-primary" onclick="submitF('pg')">Enregistrer</button>
+    </div>
+  </div>
+  </div>
+  <div class="page-data">
+  <div class="data-sec">
+    <div class="data-hd">
+      <h2>Actions globales</h2>
+      <div class="data-controls">
+        <select id="filter-pg-machine" class="search" style="width:160px" onchange="filterProcGlob()">
+          <option value="">— Toutes —</option>
+        </select>
+        <input class="search" id="search-procglob" placeholder="Rechercher..." oninput="filterProcGlob()">
+        <button class="btn btn-outline btn-sm" onclick="loadData('procglob')">↻</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr>
+      <th>Code</th><th>Machine/Éqpt</th><th>Action générique</th>
+    </tr></thead>
+    <tbody id="tb-procglob"></tbody></table></div>
+  </div>
+  </div>
+</div>
+
+<!-- ===== PROCESSUS ===== -->
+</div><div class="page" id="page-processus">
+  <div class="page-hd"><h1>Processus de Maintenance</h1><p>Actions préventives par catégorie d'équipement.<br><small style="color:var(--muted)">Code Action = Machine + numéro 2 chiffres (ex: CAMION01)</small></p></div>
+<div class="page-form">
+  <div class="card">
+    <div class="fgrid">
       <div>
         <label class="flabel">Localisation <span class="req">*</span></label>
         <select id="pr-loc" class="fsel"><option value="">— Sélectionner —</option></select>
       </div>
       <div>
-        <label class="flabel">Machine / Matériel <span class="req">*</span></label>
+        <label class="flabel">Machine/Éqpt <span class="req">*</span></label>
         <select id="pr-machine" class="fsel" onchange="onPrMachine()"><option value="">— Sélectionner —</option></select>
       </div>
       <div>
-        <label class="flabel">Spécification (Unité) <span class="req">*</span></label>
-        <select id="pr-ui" class="fsel" onchange="onPrUI()"><option value="">— Sélectionner —</option></select>
+        <label class="flabel">Spécification <span class="req">*</span></label>
+        <select id="pr-spec" class="fsel"><option value="">— Sélectionner —</option></select>
       </div>
-      <div>
-        <label class="flabel">Code UI</label>
-        <input id="pr-codeUI" class="finput auto" readonly placeholder="Auto">
-        <span class="auto-badge">Auto</span>
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <div style="flex:1"><label class="flabel">Code Action</label><div id="pr-codeAction" style="font-family:var(--mono);font-size:11px;color:var(--accent);padding:5px 0;line-height:20px">—</div></div>
       </div>
-      <div>
-        <label class="flabel">Code Action</label>
-        <input id="pr-codeAction" class="finput auto" readonly placeholder="CodeUI + N°">
-        <span class="auto-badge">Auto</span>
-      </div>
-    </div>
-    <div class="fgrid">
       <div class="f-full">
-        <label class="flabel">Actions <span class="req">*</span></label>
-        <textarea id="pr-actions" class="ftxt" placeholder="Décrire l'action de maintenance..."></textarea>
+        <label class="flabel">Action <span class="req">*</span> <small style="color:var(--muted);font-weight:400">— choisir depuis le catalogue global ou saisir librement</small></label>
+        <div style="display:flex;gap:8px;margin-bottom:4px">
+          <select id="pr-action-glob" class="fsel" onchange="onPrActionGlob()" style="flex:1">
+            <option value="">— Choisir depuis Processus Global —</option>
+          </select>
+        </div>
+        <textarea id="pr-actions" class="ftxt" placeholder="Action sélectionnée ou saisie libre..." style="min-height:38px"></textarea>
       </div>
       <div>
-        <label class="flabel">Fréquence annuelle</label>
-        <input id="pr-freq" class="finput" type="number" step="0.01" placeholder="ex: 2, 0.5, 12">
-        <p class="fhint">0.5=semestriel · 1=annuel · 12=mensuel</p>
+        <label class="flabel">Fréq. annuelle</label>
+        <input id="pr-freq" class="finput" type="number" step="0.01" placeholder="ex: 2">
       </div>
       <div>
-        <label class="flabel">Répétition (jours)</label>
+        <label class="flabel">Répétition (j)</label>
         <input id="pr-repet" class="finput" type="number" step="1" min="0" placeholder="ex: 180">
-        <p class="fhint">Intervalle en jours → prochaine intervention</p>
       </div>
       <div>
         <label class="flabel">Consommable</label>
         <select id="pr-conso" class="fsel"><option value="">— Sélectionner —</option></select>
       </div>
       <div>
-        <label class="flabel">Quantité nécessaire</label>
-        <input id="pr-qteNec" class="finput" placeholder="ex: 2 L, 4 pièces">
+        <label class="flabel">Quantité</label>
+        <input id="pr-qteNec" class="finput" placeholder="ex: 2 L">
       </div>
       <div>
-        <label class="flabel">Prévision décaissement</label>
-        <input id="pr-prev" class="finput" placeholder="Coût estimé (Ar)">
+        <label class="flabel">Prévision (Ar)</label>
+        <input id="pr-prev" class="finput" placeholder="Coût estimé">
       </div>
       <div>
         <label class="flabel">Responsable <span class="req">*</span></label>
@@ -496,7 +558,7 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
         </div>
       </div>
       <div>
-        <label class="flabel">Code Responsabilité</label>
+        <label class="flabel">Code Resp.</label>
         <input id="pr-codeResp" class="finput auto" readonly placeholder="Auto">
         <span class="auto-badge">Auto</span>
       </div>
@@ -506,23 +568,25 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       <button class="btn btn-primary" onclick="submitF('pr')">Enregistrer</button>
     </div>
   </div>
-  <div class="data-sec">
+  </div>
+<div class="page-data"><div class="data-sec">
     <div class="data-hd"><h2>Processus enregistrés</h2>
       <div class="data-controls">
-        <input class="search" placeholder="Rechercher..." oninput="filterTbl('processus',this.value)">
+        <input class="search" id="search-processus" placeholder="Rechercher action..." oninput="filterProcessus()">
         <button class="btn btn-outline btn-sm" onclick="loadData('processus')">↻</button>
       </div>
     </div>
-    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Localisation</th><th>Code UI</th><th>Code Action</th><th>Machine</th><th>Spécification</th><th>Actions</th><th>Fréq/an</th><th>Répét.(j)</th><th>Consommable</th><th>Qté nec.</th><th>Prévision</th><th>Responsable</th></tr></thead>
+    <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Localisation</th><th>Code Action</th><th>Machine/Éqpt</th><th>Spécification</th><th>Actions</th><th>Fréq/an</th><th>Répét.(j)</th><th>Consommable</th><th>Qté nec.</th><th>Prévision</th><th>Responsable</th></tr></thead>
     <tbody id="tb-processus"></tbody></table></div>
   </div>
 </div>
 
 <!-- ===== MAINTENANCE ===== -->
-<div class="page" id="page-maintenance">
-  <div class="page-hd"><h1>Enregistrement Maintenance</h1><p>Sélectionnez la machine, l'unité, puis cochez les actions réalisées.<br><small style="color:var(--muted)">Code Intervention = AAAAMMJJ_CodeAction</small></p></div>
+</div><div class="page" id="page-maintenance">
+  <div class="page-hd"><h1>Enregistrement Maintenance</h1><p>Sélectionnez la localisation et la machine — les actions disponibles s'affichent automatiquement.<br><small style="color:var(--muted)">Code Intervention = AAAAMMJJ_CodeAction</small></p></div>
+<div class="page-form">
   <div class="card">
-    <div class="fgrid3">
+    <div class="fgrid">
       <div>
         <label class="flabel">Date d'intervention</label>
         <input id="ma-date" class="finput auto" readonly>
@@ -533,25 +597,25 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
         <select id="ma-loc" class="fsel"><option value="">— Sélectionner —</option></select>
       </div>
       <div>
-        <label class="flabel">Machine / Matériel <span class="req">*</span></label>
+        <label class="flabel">Machine/Éqpt <span class="req">*</span></label>
         <select id="ma-machine" class="fsel" onchange="onMaMachine()"><option value="">— Sélectionner —</option></select>
       </div>
-      <div class="f-full">
-        <label class="flabel">Spécification (Unité) <span class="req">*</span></label>
-        <select id="ma-ui" class="fsel" onchange="onMaUI()"><option value="">— Sélectionner —</option></select>
+      <div>
+        <label class="flabel">Spécification</label>
+        <select id="ma-spec" class="fsel" onchange="onMaSpec()"><option value="">— Sélectionner —</option></select>
       </div>
     </div>
-    <!-- Checklist actions -->
-    <div id="ma-actions-zone" style="display:none;margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
-        <label class="flabel" style="margin:0">Actions à enregistrer <span class="req">*</span></label>
-        <div style="display:flex;gap:7px">
-          <button class="btn btn-outline btn-sm" onclick="maSelectAll()">Tout sélectionner</button>
-          <button class="btn btn-secondary btn-sm" onclick="maDeselectAll()">Tout désélectionner</button>
+    <!-- Actions pré-remplies depuis Processus -->
+    <div id="ma-actions-zone" style="display:none;margin-bottom:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <label class="flabel" style="margin:0">Actions du processus <span style="color:var(--muted);font-weight:400;font-size:10px">— cochez celles réalisées aujourd'hui</span></label>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-outline btn-sm" onclick="maSelectAll()">Tout cocher</button>
+          <button class="btn btn-secondary btn-sm" onclick="maDeselectAll()">Tout décocher</button>
+          <button class="btn btn-primary btn-sm" onclick="maGenerateTable()">✓ Confirmer</button>
         </div>
       </div>
       <div id="ma-checklist" class="ma-checklist"></div>
-      <button class="btn btn-primary" style="margin-top:10px" onclick="maGenerateTable()">✓ Valider la sélection</button>
     </div>
     <!-- Tableau éditable -->
     <div id="ma-table-zone" style="display:none;margin-bottom:16px">
@@ -582,7 +646,8 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       <button class="btn btn-primary" onclick="submitMaintenance()">💾 Enregistrer les interventions</button>
     </div>
   </div>
-  <div class="data-sec">
+  </div>
+<div class="page-data"><div class="data-sec">
     <div class="data-hd"><h2>Interventions enregistrées</h2>
       <div class="data-controls">
         <input class="search" placeholder="Rechercher..." oninput="filterTbl('maintenance',this.value)">
@@ -595,8 +660,9 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
 </div>
 
 <!-- ===== ADMIN ===== -->
-<div class="page" id="page-admin">
+</div><div class="page" id="page-admin">
   <div class="page-hd"><h1>Administration</h1><p>Configuration des URLs Google Apps Script.</p></div>
+<div class="page-form">
   <div class="notice">ℹ️ &nbsp;Une seule URL Apps Script suffit si vous utilisez un seul déploiement pour toutes les feuilles.</div>
   <div class="agrid">
     <div class="acard"><div class="acard-hd"><span class="aicon">📍</span><div><h3>Base Localisation</h3><p>Feuille: Base Localisation</p></div></div>
@@ -624,7 +690,11 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       <input id="url-unite" class="finput" placeholder="https://script.google.com/macros/s/.../exec">
       <div><button class="btn btn-outline btn-sm" onclick="testURL('unite')">Tester</button><span class="test-res" id="tr-unite"></span></div>
     </div>
-    <div class="acard"><div class="acard-hd"><span class="aicon">📋</span><div><h3>Base Processus</h3><p>Feuille: Base Processus</p></div></div>
+    <div class="acard"><div class="acard-hd"><span class="aicon">📗</span><div><h3>Processus Global</h3><p>Feuille: Base Processus Global</p></div></div>
+      <input id="url-procglob" class="finput" placeholder="https://script.google.com/macros/s/.../exec">
+      <div><button class="btn btn-outline btn-sm" onclick="testURL('procglob')">Tester</button><span class="test-res" id="tr-procglob"></span></div>
+    </div>
+    <div class="acard"><div class="acard-hd"><span class="aicon">📋</span><div><h3>Base Processus Détail</h3><p>Feuille: Base Processus</p></div></div>
       <input id="url-processus" class="finput" placeholder="https://script.google.com/macros/s/.../exec">
       <div><button class="btn btn-outline btn-sm" onclick="testURL('processus')">Tester</button><span class="test-res" id="tr-processus"></span></div>
     </div>
@@ -647,7 +717,7 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
     </ol>
   </div>
 </div>
-
+</div>
 </div><!-- /pages -->
 </div><!-- /main -->
 </div><!-- /app -->
@@ -692,6 +762,7 @@ let store = {
   pu:           [...INIT_PU],
   equipement:   [...INIT_EQ],
   unite:        [...INIT_UN],
+  procglob:     [],
   processus:    [...INIT_PROC],
   maintenance:  [...INIT_MAINT]
 };
@@ -700,7 +771,7 @@ let store = {
 // CONFIG
 // ============================================================
 const CFG_KEY = 'maint_cfg';
-let cfg = {localisation:'',personnel:'',consommable:'',pu:'',equipement:'',unite:'',processus:'',maintenance:''};
+let cfg = {localisation:'',personnel:'',consommable:'',pu:'',equipement:'',unite:'',procglob:'',processus:'',maintenance:''};
 
 function loadCfg() {
   try { const s=localStorage.getItem(CFG_KEY); if(s) cfg=JSON.parse(s); } catch(e){}
@@ -731,8 +802,9 @@ function updateStatus() {
 const TITLES = {
   localisation:'Localisation',personnel:'Personnel',
   consommable:'Base Consommable',pu:'PU Consommables',
-  equipement:'Liste Équipement',unite:"Unité d'Intervention",
-  processus:'Processus',maintenance:'Maintenance',admin:'Administration'
+  equipement:'Liste Voiture/Machine/Équipement',unite:'Spécification V/M/É',
+  procglob:'Processus Global',
+  processus:'Processus Détail',maintenance:'Maintenance',admin:'Administration'
 };
 
 document.querySelectorAll('.nav-item').forEach(el=>{
@@ -754,6 +826,7 @@ function navigateTo(page) {
   if(pg) pg.classList.add('active');
   document.getElementById('topTitle').textContent=TITLES[page]||page;
   if(page!=='admin') loadData(page);
+  if(page==='procglob') populateFilters();
 }
 
 // ============================================================
@@ -797,16 +870,28 @@ const RENDERS = {
   pu:            r=>'<td><code>'+esc(r.code)+'</code></td><td>'+esc(r.categorie)+'</td><td>'+esc(r.designation)+'</td><td>'+esc(r.annee)+'</td><td>'+(r.pu?Number(r.pu).toLocaleString('fr-FR')+' Ar':'')+'</td>',
   equipement:    r=>'<td><code>'+esc(r.code)+'</code></td><td>'+esc(r.machine)+'</td>',
   unite:         r=>'<td>'+esc(r.machine)+'</td><td>'+esc(r.spec)+'</td><td><code>'+esc(r.codeEqpt)+'</code></td><td><code>'+esc(r.codeUI)+'</code></td>',
-  processus:     r=>'<td>'+esc(r.localisation)+'</td><td><code>'+esc(r.codeUI)+'</code></td><td><code>'+esc(r.codeAction)+'</code></td><td>'+esc(r.machine)+'</td><td>'+esc(r.spec)+'</td><td class="cell-act">'+esc((r.actions||'').substring(0,80))+'</td><td>'+esc(r.freq)+'</td><td>'+esc(r.repet)+'</td><td>'+esc(r.consommable)+'</td><td>'+esc(r.qteNecessaire)+'</td><td>'+esc(r.prevision)+'</td><td>'+esc(r.responsable)+'</td>',
-  maintenance:   r=>'<td><code>'+esc(r.codeInt)+'</code></td><td>'+esc(r.date)+'</td><td>'+esc(r.localisation)+'</td><td>'+esc(r.machine)+'</td><td>'+esc(r.spec)+'</td><td class="cell-act">'+esc((r.actions||'').substring(0,60))+'</td><td><code>'+esc(r.codeAction)+'</code></td><td>'+esc(r.nextDate)+'</td><td>'+esc(r.poste)+'</td><td>'+esc(r.responsable)+'</td><td>'+esc(r.conso)+'</td><td>'+esc(r.qte)+'</td><td>'+esc(r.obs)+'</td>'
+  procglob:      r=>'<td><code>'+esc(r.codeGlob||'')+'</code></td><td>'+esc(r.machine||'')+'</td><td class="cell-act">'+esc((r.action||'').substring(0,100))+'</td>',
+  processus:     r=>'<td>'+esc(r.localisation)+'</td><td><code>'+esc(r.codeAction)+'</code></td><td>'+esc(r.machine)+'</td><td>'+esc(r.spec||'')+'</td><td class="cell-act">'+esc((r.actions||'').substring(0,80))+'</td><td>'+esc(r.freq)+'</td><td>'+esc(r.repet)+'</td><td>'+esc(r.consommable)+'</td><td>'+esc(r.qteNecessaire)+'</td><td>'+esc(r.prevision)+'</td><td>'+esc(r.responsable)+'</td>',
+  maintenance:   r=>'<td><code>'+esc(r.codeInt)+'</code></td><td>'+esc(r.date)+'</td><td>'+esc(r.localisation)+'</td><td>'+esc(r.machine)+'</td><td>'+esc(r.spec||'')+'</td><td class="cell-act">'+esc((r.actions||'').substring(0,60))+'</td><td><code>'+esc(r.codeAction)+'</code></td><td>'+esc(r.nextDate)+'</td><td>'+esc(r.poste)+'</td><td>'+esc(r.responsable)+'</td><td>'+esc(r.conso)+'</td><td>'+esc(r.qte)+'</td><td>'+esc(r.obs)+'</td>'
 };
 
-const COL_COUNT = {localisation:2,personnel:6,consommable:3,pu:5,equipement:2,unite:4,processus:12,maintenance:13};
+const COL_COUNT = {localisation:2,personnel:6,consommable:3,pu:5,equipement:2,unite:4,procglob:3,processus:11,maintenance:13};
 
 function renderTbl(sheet,data) {
   const tb=document.getElementById('tb-'+sheet); if(!tb) return;
   if(!data||!data.length) { tb.innerHTML='<tr class="empty-row"><td colspan="'+(COL_COUNT[sheet]||4)+'">Aucune donnée.</td></tr>'; return; }
-  tb.innerHTML=data.map(r=>'<tr>'+RENDERS[sheet](r)+'</tr>').join('');
+  const rowAttr = {
+    procglob:    r=>'data-machine="'+esc(r.machine||'')+'"',
+    consommable: r=>'data-cat="'+esc(r.categorie||'')+'"',
+    unite:       r=>'data-machine="'+esc(r.machine||'')+'"',
+    processus:   r=>'data-machine="'+esc(r.machine||'')+'" data-spec="'+esc(r.spec||'')+'"'
+  };
+  const attrFn = rowAttr[sheet] || (r=>'');
+  tb.innerHTML=data.map(r=>'<tr '+attrFn(r)+'>'+RENDERS[sheet](r)+'</tr>').join('');
+  if(sheet==='procglob') filterProcGlob();
+  if(sheet==='consommable') filterConsommable();
+  if(sheet==='unite') filterUnite();
+  if(sheet==='processus') filterProcessus();
 }
 
 function filterTbl(sheet,q) {
@@ -833,13 +918,14 @@ function initDropdowns() {
   ['pr-loc','ma-loc'].forEach(id=>fillSel(id,store.localisation,'localisation','localisation'));
   // Machines
   const machines=[...new Map(store.equipement.map(e=>[e.machine,e])).values()];
-  ['un-machine','pr-machine','ma-machine'].forEach(id=>fillSel(id,machines,'machine','machine'));
+  ['un-machine','pg-machine','pr-machine','ma-machine'].forEach(id=>fillSel(id,machines,'machine','machine'));
   // Responsables
   fillSel('pr-resp',store.personnel,'poste','poste');
   // Consommables in processus
   fillSel('pr-conso',store.consommable,'designation','designation');
   // PU consommable selector
   fillSel('pu-conso',store.consommable,'designation','designation');
+  populateFilters();
 }
 
 // ============================================================
@@ -913,20 +999,18 @@ document.getElementById('un-spec').addEventListener('input',genUnCode);
 // ============================================================
 function onPrMachine() {
   const m=v('pr-machine');
-  const uis=store.unite.filter(u=>u.machine===m);
-  fillSel('pr-ui',uis,'spec','spec');
-  set('pr-codeUI',''); set('pr-codeAction','');
-}
-function onPrUI() {
-  const m=v('pr-machine'), spec=v('pr-ui');
-  const found=store.unite.find(u=>u.machine===m&&u.spec===spec);
-  const codeUI=found?found.codeUI:'';
-  set('pr-codeUI',codeUI);
-  if(codeUI) {
-    const n=store.processus.filter(p=>p.codeUI===codeUI).length+1;
-    set('pr-codeAction',codeUI+String(n).padStart(2,'0'));
+  // Generate code action
+  const codeActionEl=document.getElementById('pr-codeAction');
+  if(m) {
+    const n=store.processus.filter(p=>p.machine===m).length+1;
+    const pfx=m.replace(/[^A-Za-z0-9]/g,'').substring(0,6).toUpperCase();
+    if(codeActionEl) codeActionEl.textContent=pfx+String(n).padStart(2,'0');
+  } else {
+    if(codeActionEl) codeActionEl.textContent='—';
   }
+  filterProcessus();
 }
+// onPrUI removed
 function onPrResp() {
   const resp=v('pr-resp');
   const p=store.personnel.find(x=>x.poste===resp);
@@ -934,9 +1018,433 @@ function onPrResp() {
 }
 
 // ============================================================
+// PROCESSUS GLOBAL
+// ============================================================
+function onPgMachine() {
+  const m = v('pg-machine');
+  const el = document.getElementById('pg-codeGlob');
+  if (!m) { if(el) el.textContent='—'; return; }
+  const pfx = m.replace(/[^A-Za-z0-9]/g,'').substring(0,4).toUpperCase();
+  const n = store.procglob.filter(p=>p.machine===m).length + 1;
+  if(el) el.textContent = pfx + 'G' + String(n).padStart(2,'0');
+}
+
+function filterProcGlob() {
+  const machine = (document.getElementById('filter-pg-machine')||{}).value||'';
+  const q = ((document.getElementById('search-procglob')||{}).value||'').toLowerCase();
+  const tb = document.getElementById('tb-procglob');
+  if(!tb) return;
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
+    const machOk = !machine || (row.dataset.machine||'')===machine;
+    const qOk    = !q || row.textContent.toLowerCase().includes(q);
+    row.style.display = (machOk&&qOk)?'':'none';
+  });
+}
+
+// ============================================================
+// PROCESSUS DETAIL
+// ============================================================
+function onPrMachine() {
+  const m = v('pr-machine');
+  // Cascade spécifications
+  const specs = store.unite.filter(u=>u.machine===m);
+  fillSel('pr-spec', specs, 'spec', 'spec');
+  // Cascade actions globales pour cette machine
+  const globs = store.procglob.filter(g=>g.machine===m);
+  const sel = document.getElementById('pr-action-glob');
+  if(sel) {
+    sel.innerHTML = '<option value="">— Choisir depuis Processus Global —</option>';
+    globs.forEach(function(g){
+      const o=document.createElement('option');
+      o.value=g.action; o.textContent=g.action; sel.appendChild(o);
+    });
+  }
+  // Générer code action
+  const el = document.getElementById('pr-codeAction');
+  if(m) {
+    const n = store.processus.filter(p=>p.machine===m).length+1;
+    const pfx = m.replace(/[^A-Za-z0-9]/g,'').substring(0,6).toUpperCase();
+    if(el) el.textContent = pfx+String(n).padStart(2,'0');
+  } else {
+    if(el) el.textContent = '—';
+  }
+  filterProcessus();
+}
+
+function onPrActionGlob() {
+  const val = v('pr-action-glob');
+  if(val) set('pr-actions', val);
+}
+
+// ============================================================
+// MAINTENANCE — chargement automatique des actions
+// ============================================================
+function onMaMachine() {
+  const m = v('ma-machine');
+  document.getElementById('ma-actions-zone').style.display='none';
+  document.getElementById('ma-table-zone').style.display='none';
+  document.getElementById('ma-submit-bar').style.display='none';
+  document.getElementById('ma-checklist').innerHTML='';
+  // Cascade spécifications
+  const specs = store.unite.filter(u=>u.machine===m);
+  fillSel('ma-spec', specs, 'spec', 'spec');
+  if(m) buildMaChecklist(m);
+}
+
+function onMaSpec() {
+  const m    = v('ma-machine');
+  const spec = v('ma-spec');
+  // Reset tableau si déjà généré
+  document.getElementById('ma-table-zone').style.display='none';
+  document.getElementById('ma-submit-bar').style.display='none';
+  document.getElementById('ma-checklist').innerHTML='';
+  if(m) buildMaChecklist(m, spec);
+}
+
+function buildMaChecklist(m, spec) {
+  // Filtrer par machine ET spécification si choisie
+  let acts;
+  if(spec) {
+    // Spécification choisie — actions de cette spécification uniquement
+    acts = store.processus.filter(function(p){
+      return p.machine===m && p.spec===spec;
+    });
+    // Si aucune action pour cette spec, élargir à la machine sans spec
+    if(!acts.length) {
+      acts = store.processus.filter(function(p){
+        return p.machine===m && (!p.spec || p.spec==='');
+      });
+    }
+  } else {
+    // Pas de spécification — toutes les actions de la machine
+    acts = store.processus.filter(function(p){ return p.machine===m; });
+  }
+  // Fallback sur processus global si toujours vide
+  if(!acts.length) {
+    acts = store.procglob.filter(function(p){return p.machine===m;}).map(function(g){
+      return {codeAction: g.codeGlob, actions: g.action, machine: g.machine,
+              freq: null, repet: null, responsable: '', consommable: ''};
+    });
+  }
+  const list = document.getElementById('ma-checklist');
+  list.innerHTML='';
+  if(!acts.length) {
+    list.innerHTML='<div style="color:var(--muted);padding:10px">Aucune action définie. Renseignez le Processus Détail.</div>';
+    document.getElementById('ma-actions-zone').style.display='block';
+    return;
+  }
+  // Tout pré-cocher par défaut
+  acts.forEach(function(a){
+    const item=document.createElement('label');
+    item.className='ma-check-item selected';
+    item.innerHTML='<input type="checkbox" value="'+esc(a.codeAction)+'" checked onchange="maItemToggle(this)">'+
+      '<div class="ma-check-label">'+
+      '<span class="ma-check-code">'+esc(a.codeAction)+'</span>'+
+      '<span class="ma-check-action">'+esc(a.actions||'')+'</span>'+
+      (a.consommable?'<span style="font-size:10px;color:var(--muted)">🧴 '+esc(a.consommable)+'</span>':'')+'</div>';
+    list.appendChild(item);
+  });
+  document.getElementById('ma-actions-zone').style.display='block';
+}
+
+// ============================================================
+// FILTER FUNCTIONS
+// ============================================================
+function filterConsommable() {
+  var cat  = (document.getElementById('filter-conso-cat')||{}).value||'';
+  var q    = ((document.getElementById('search-conso')||{}).value||'').toLowerCase();
+  var tb   = document.getElementById('tb-consommable');
+  if(!tb) return;
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
+    var txt  = row.textContent.toLowerCase();
+    var rowCat = row.dataset.cat||'';
+    var catOk  = !cat || rowCat === cat;
+    var qOk    = !q   || txt.includes(q);
+    row.style.display = (catOk && qOk) ? '' : 'none';
+  });
+}
+
+function filterUnite() {
+  var machine = (document.getElementById('filter-unite-machine')||{}).value||'';
+  var q       = ((document.getElementById('search-unite')||{}).value||'').toLowerCase();
+  var tb      = document.getElementById('tb-unite');
+  if(!tb) return;
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
+    var txt     = row.textContent.toLowerCase();
+    var rowMach = row.dataset.machine||'';
+    var machOk  = !machine || rowMach === machine;
+    var qOk     = !q       || txt.includes(q);
+    row.style.display = (machOk && qOk) ? '' : 'none';
+  });
+}
+
+function filterProcessus() {
+  var machine = v('pr-machine');
+  var q       = ((document.getElementById('search-processus')||{}).value||'').toLowerCase();
+  var tb      = document.getElementById('tb-processus');
+  if(!tb) return;
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
+    var txt     = row.textContent.toLowerCase();
+    var rowMach = row.dataset.machine||'';
+    var machOk  = !machine || rowMach === machine;
+    var qOk     = !q       || txt.includes(q);
+    row.style.display = (machOk && qOk) ? '' : 'none';
+  });
+}
+
+function populateFilters() {
+  // Processus Global machine filter
+  var pgSel=document.getElementById('filter-pg-machine');
+  if(pgSel){
+    var pgMachines=[...new Set(store.procglob.map(function(p){return p.machine;}).filter(Boolean))].sort();
+    pgSel.innerHTML='<option value="">— Toutes —</option>';
+    pgMachines.forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=m;pgSel.appendChild(o);});
+  }
+  // Consommable catégories
+  var catSel = document.getElementById('filter-conso-cat');
+  if(catSel) {
+    var cats = [...new Set(store.consommable.map(function(c){return c.categorie;}).filter(Boolean))].sort();
+    catSel.innerHTML = '<option value="">— Toutes catégories —</option>';
+    cats.forEach(function(c){
+      var o=document.createElement('option'); o.value=c; o.textContent=c; catSel.appendChild(o);
+    });
+  }
+  // Unite machine filter
+  var unSel = document.getElementById('filter-unite-machine');
+  if(unSel) {
+    var machines = [...new Set(store.unite.map(function(u){return u.machine;}).filter(Boolean))].sort();
+    unSel.innerHTML = '<option value="">— Toutes —</option>';
+    machines.forEach(function(m){
+      var o=document.createElement('option'); o.value=m; o.textContent=m; unSel.appendChild(o);
+    });
+  }
+  // Entité responsable datalist
+  var entiteList = document.getElementById('entite-list');
+  if(entiteList) {
+    var entites = [...new Set(store.personnel.map(function(p){return p.entite;}).filter(Boolean))];
+    entiteList.innerHTML = '';
+    entites.forEach(function(e){
+      var o=document.createElement('option'); o.value=e; entiteList.appendChild(o);
+    });
+  }
+}
+
+// ============================================================
 // FORM: PU CONSOMMABLE
 // ============================================================
 
+
+// ============================================================
+// PROCESSUS GLOBAL
+// ============================================================
+function onPgMachine() {
+  const m = v('pg-machine');
+  const el = document.getElementById('pg-codeGlob');
+  if (!m) { if(el) el.textContent='—'; return; }
+  const pfx = m.replace(/[^A-Za-z0-9]/g,'').substring(0,4).toUpperCase();
+  const n = store.procglob.filter(p=>p.machine===m).length + 1;
+  if(el) el.textContent = pfx + 'G' + String(n).padStart(2,'0');
+}
+
+function filterProcGlob() {
+  const machine = (document.getElementById('filter-pg-machine')||{}).value||'';
+  const q = ((document.getElementById('search-procglob')||{}).value||'').toLowerCase();
+  const tb = document.getElementById('tb-procglob');
+  if(!tb) return;
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
+    const machOk = !machine || (row.dataset.machine||'')===machine;
+    const qOk    = !q || row.textContent.toLowerCase().includes(q);
+    row.style.display = (machOk&&qOk)?'':'none';
+  });
+}
+
+// ============================================================
+// PROCESSUS DETAIL
+// ============================================================
+function onPrMachine() {
+  const m = v('pr-machine');
+  // Cascade spécifications
+  const specs = store.unite.filter(u=>u.machine===m);
+  fillSel('pr-spec', specs, 'spec', 'spec');
+  // Cascade actions globales pour cette machine
+  const globs = store.procglob.filter(g=>g.machine===m);
+  const sel = document.getElementById('pr-action-glob');
+  if(sel) {
+    sel.innerHTML = '<option value="">— Choisir depuis Processus Global —</option>';
+    globs.forEach(function(g){
+      const o=document.createElement('option');
+      o.value=g.action; o.textContent=g.action; sel.appendChild(o);
+    });
+  }
+  // Générer code action
+  const el = document.getElementById('pr-codeAction');
+  if(m) {
+    const n = store.processus.filter(p=>p.machine===m).length+1;
+    const pfx = m.replace(/[^A-Za-z0-9]/g,'').substring(0,6).toUpperCase();
+    if(el) el.textContent = pfx+String(n).padStart(2,'0');
+  } else {
+    if(el) el.textContent = '—';
+  }
+  filterProcessus();
+}
+
+function onPrActionGlob() {
+  const val = v('pr-action-glob');
+  if(val) set('pr-actions', val);
+}
+
+// ============================================================
+// MAINTENANCE — chargement automatique des actions
+// ============================================================
+function onMaMachine() {
+  const m = v('ma-machine');
+  document.getElementById('ma-actions-zone').style.display='none';
+  document.getElementById('ma-table-zone').style.display='none';
+  document.getElementById('ma-submit-bar').style.display='none';
+  document.getElementById('ma-checklist').innerHTML='';
+  // Cascade spécifications
+  const specs = store.unite.filter(u=>u.machine===m);
+  fillSel('ma-spec', specs, 'spec', 'spec');
+  if(m) buildMaChecklist(m);
+}
+
+function onMaSpec() {
+  const m    = v('ma-machine');
+  const spec = v('ma-spec');
+  // Reset tableau si déjà généré
+  document.getElementById('ma-table-zone').style.display='none';
+  document.getElementById('ma-submit-bar').style.display='none';
+  document.getElementById('ma-checklist').innerHTML='';
+  if(m) buildMaChecklist(m, spec);
+}
+
+function buildMaChecklist(m, spec) {
+  // Filtrer par machine ET spécification si choisie
+  let acts;
+  if(spec) {
+    // Spécification choisie — actions de cette spécification uniquement
+    acts = store.processus.filter(function(p){
+      return p.machine===m && p.spec===spec;
+    });
+    // Si aucune action pour cette spec, élargir à la machine sans spec
+    if(!acts.length) {
+      acts = store.processus.filter(function(p){
+        return p.machine===m && (!p.spec || p.spec==='');
+      });
+    }
+  } else {
+    // Pas de spécification — toutes les actions de la machine
+    acts = store.processus.filter(function(p){ return p.machine===m; });
+  }
+  // Fallback sur processus global si toujours vide
+  if(!acts.length) {
+    acts = store.procglob.filter(function(p){return p.machine===m;}).map(function(g){
+      return {codeAction: g.codeGlob, actions: g.action, machine: g.machine,
+              freq: null, repet: null, responsable: '', consommable: ''};
+    });
+  }
+  const list = document.getElementById('ma-checklist');
+  list.innerHTML='';
+  if(!acts.length) {
+    list.innerHTML='<div style="color:var(--muted);padding:10px">Aucune action définie. Renseignez le Processus Détail.</div>';
+    document.getElementById('ma-actions-zone').style.display='block';
+    return;
+  }
+  // Tout pré-cocher par défaut
+  acts.forEach(function(a){
+    const item=document.createElement('label');
+    item.className='ma-check-item selected';
+    item.innerHTML='<input type="checkbox" value="'+esc(a.codeAction)+'" checked onchange="maItemToggle(this)">'+
+      '<div class="ma-check-label">'+
+      '<span class="ma-check-code">'+esc(a.codeAction)+'</span>'+
+      '<span class="ma-check-action">'+esc(a.actions||'')+'</span>'+
+      (a.consommable?'<span style="font-size:10px;color:var(--muted)">🧴 '+esc(a.consommable)+'</span>':'')+'</div>';
+    list.appendChild(item);
+  });
+  document.getElementById('ma-actions-zone').style.display='block';
+}
+
+// ============================================================
+// FILTER FUNCTIONS
+// ============================================================
+function filterConsommable() {
+  var cat  = (document.getElementById('filter-conso-cat')||{}).value||'';
+  var q    = ((document.getElementById('search-conso')||{}).value||'').toLowerCase();
+  var tb   = document.getElementById('tb-consommable');
+  if(!tb) return;
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
+    var txt  = row.textContent.toLowerCase();
+    var rowCat = row.dataset.cat||'';
+    var catOk  = !cat || rowCat === cat;
+    var qOk    = !q   || txt.includes(q);
+    row.style.display = (catOk && qOk) ? '' : 'none';
+  });
+}
+
+function filterUnite() {
+  var machine = (document.getElementById('filter-unite-machine')||{}).value||'';
+  var q       = ((document.getElementById('search-unite')||{}).value||'').toLowerCase();
+  var tb      = document.getElementById('tb-unite');
+  if(!tb) return;
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
+    var txt     = row.textContent.toLowerCase();
+    var rowMach = row.dataset.machine||'';
+    var machOk  = !machine || rowMach === machine;
+    var qOk     = !q       || txt.includes(q);
+    row.style.display = (machOk && qOk) ? '' : 'none';
+  });
+}
+
+function filterProcessus() {
+  var machine = v('pr-machine');
+  var q       = ((document.getElementById('search-processus')||{}).value||'').toLowerCase();
+  var tb      = document.getElementById('tb-processus');
+  if(!tb) return;
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
+    var txt     = row.textContent.toLowerCase();
+    var rowMach = row.dataset.machine||'';
+    var machOk  = !machine || rowMach === machine;
+    var qOk     = !q       || txt.includes(q);
+    row.style.display = (machOk && qOk) ? '' : 'none';
+  });
+}
+
+function populateFilters() {
+  // Processus Global machine filter
+  var pgSel=document.getElementById('filter-pg-machine');
+  if(pgSel){
+    var pgMachines=[...new Set(store.procglob.map(function(p){return p.machine;}).filter(Boolean))].sort();
+    pgSel.innerHTML='<option value="">— Toutes —</option>';
+    pgMachines.forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=m;pgSel.appendChild(o);});
+  }
+  // Consommable catégories
+  var catSel = document.getElementById('filter-conso-cat');
+  if(catSel) {
+    var cats = [...new Set(store.consommable.map(function(c){return c.categorie;}).filter(Boolean))].sort();
+    catSel.innerHTML = '<option value="">— Toutes catégories —</option>';
+    cats.forEach(function(c){
+      var o=document.createElement('option'); o.value=c; o.textContent=c; catSel.appendChild(o);
+    });
+  }
+  // Unite machine filter
+  var unSel = document.getElementById('filter-unite-machine');
+  if(unSel) {
+    var machines = [...new Set(store.unite.map(function(u){return u.machine;}).filter(Boolean))].sort();
+    unSel.innerHTML = '<option value="">— Toutes —</option>';
+    machines.forEach(function(m){
+      var o=document.createElement('option'); o.value=m; o.textContent=m; unSel.appendChild(o);
+    });
+  }
+  // Entité responsable datalist
+  var entiteList = document.getElementById('entite-list');
+  if(entiteList) {
+    var entites = [...new Set(store.personnel.map(function(p){return p.entite;}).filter(Boolean))];
+    entiteList.innerHTML = '';
+    entites.forEach(function(e){
+      var o=document.createElement('option'); o.value=e; entiteList.appendChild(o);
+    });
+  }
+}
 
 // ============================================================
 // FORM: PU CONSOMMABLE
@@ -944,8 +1452,10 @@ function onPrResp() {
 function onPuConso(){
   var desig=v('pu-conso');
   var found=store.consommable.find(function(c){return c.designation===desig;});
-  set('pu-code',found?found.code:'');
-  set('pu-cat',found?found.categorie:'');
+  var codeEl=document.getElementById('pu-code');
+  var catEl=document.getElementById('pu-cat');
+  if(codeEl) codeEl.textContent=found?found.code:'—';
+  if(catEl)  catEl.textContent=found?found.categorie:'—';
 }
 
 // ============================================================
@@ -953,37 +1463,45 @@ function onPuConso(){
 // ============================================================
 function onMaMachine() {
   const m=v('ma-machine');
-  const uis=store.unite.filter(u=>u.machine===m);
-  fillSel('ma-ui',uis,'spec','spec');
+  // Reset tout
   document.getElementById('ma-actions-zone').style.display='none';
   document.getElementById('ma-table-zone').style.display='none';
   document.getElementById('ma-submit-bar').style.display='none';
   document.getElementById('ma-checklist').innerHTML='';
+  // Remplir les spécifications en cascade
+  const specs=store.unite.filter(u=>u.machine===m);
+  fillSel('ma-spec', specs, 'spec', 'spec');
+  // Charger les actions directement (toutes pour cette machine)
+  if(m) loadMaActions(m);
 }
 
-function onMaUI() {
-  const m=v('ma-machine'), spec=v('ma-ui');
-  const found=store.unite.find(u=>u.machine===m&&u.spec===spec);
-  document.getElementById('ma-table-zone').style.display='none';
-  document.getElementById('ma-submit-bar').style.display='none';
-  if(!found){ document.getElementById('ma-actions-zone').style.display='none'; return; }
-  const acts=store.processus.filter(p=>p.codeUI===found.codeUI);
+function onMaSpec() {
+  // La spécification est informative — les actions restent basées sur la machine
+  // Pre-filtrer visuellement si souhaite
+}
+
+function loadMaActions(m) {
+  const acts=store.processus.filter(p=>p.machine===m);
   const list=document.getElementById('ma-checklist');
   list.innerHTML='';
   if(!acts.length){
-    list.innerHTML='<div style="color:var(--muted);padding:10px">Aucune action définie pour cette unité.</div>';
+    list.innerHTML='<div style="color:var(--muted);padding:10px">Aucune action définie pour cette machine.</div>';
     document.getElementById('ma-actions-zone').style.display='block';
     return;
   }
-  acts.forEach(a=>{
+  acts.forEach(function(a){
     const item=document.createElement('label');
     item.className='ma-check-item';
-    item.innerHTML='<input type="checkbox" value="'+esc(a.codeAction)+'" onchange="maItemToggle(this)"><div class="ma-check-label"><span class="ma-check-code">'+esc(a.codeAction)+'</span><span class="ma-check-action">'+esc(a.actions||'')+'</span></div>';
+    item.innerHTML='<input type="checkbox" value="'+esc(a.codeAction)+'" onchange="maItemToggle(this)">'+
+      '<div class="ma-check-label">'+
+      '<span class="ma-check-code">'+esc(a.codeAction)+'</span>'+
+      '<span class="ma-check-action">'+esc(a.actions||'')+'</span></div>';
     list.appendChild(item);
   });
   document.getElementById('ma-actions-zone').style.display='block';
 }
 
+// onMaUI removed — actions loaded directly in onMaMachine
 function maItemToggle(cb){cb.closest('.ma-check-item').classList.toggle('selected',cb.checked);}
 function maSelectAll(){document.querySelectorAll('#ma-checklist input[type=checkbox]').forEach(cb=>{cb.checked=true;cb.closest('.ma-check-item').classList.add('selected');});}
 function maDeselectAll(){document.querySelectorAll('#ma-checklist input[type=checkbox]').forEach(cb=>{cb.checked=false;cb.closest('.ma-check-item').classList.remove('selected');});}
@@ -1034,14 +1552,18 @@ function maGenerateTable() {
     addOpt(sel4,'','-- Nom --');
     tr.appendChild(makeTd(sel4));
 
-    // Col 5: Consommable
-    var sel5=makeSel('ma-conso-sel');
-    addOpt(sel5,'','--');
-    store.consommable.forEach(function(c){addOpt(sel5,c.designation,c.designation);});
-    tr.appendChild(makeTd(sel5));
+    // Col 5: Consommable — texte auto depuis Base Processus (non modifiable)
+    var conso = proc.consommable||'';
+    var sp5=document.createElement('span');
+    sp5.className='td-auto';
+    sp5.style.cssText='font-size:11.5px;color:#e2e8f0;white-space:normal;line-height:1.3';
+    sp5.textContent=conso||'—';
+    sp5.dataset.conso=conso;
+    tr.appendChild(makeTd(sp5));
 
-    // Col 6: Quantite
-    tr.appendChild(makeTd(makeInput('number','','0','80px')));
+    // Col 6: Quantité — pré-remplie depuis proc.qteNecessaire, modifiable
+    var qteNec = proc.qteNecessaire||'';
+    tr.appendChild(makeTd(makeInput('text',qteNec,'0','90px')));
 
     // Col 7: Observation
     tr.appendChild(makeTd(makeInput('text','','Observation...','100%')));
@@ -1056,9 +1578,8 @@ function maGenerateTable() {
 
     tbody.appendChild(tr);
 
-    // Pre-fill poste/nom/consommable
+    // Pre-fill depuis Base Processus
     if(proc.responsable){sel3.value=proc.responsable;maRowPosteChange(sel3);}
-    if(proc.consommable){sel5.value=proc.consommable||'';}
   });
 
   document.getElementById('ma-table-zone').style.display='block';
@@ -1116,7 +1637,11 @@ async function submitF(form) {
     var desig=v('pu-conso'),annee=v('pu-annee'),prix=v('pu-prix');
     if(!desig||!annee||!prix){toast('Tous les champs sont requis.','error');return;}
     var found=store.consommable.find(function(c){return c.designation===desig;});
-    data={code:found?found.code:'',categorie:found?found.categorie:'',designation:desig,annee:parseInt(annee),pu:parseFloat(prix)||0};
+    var codeEl=document.getElementById('pu-code');
+    var catEl=document.getElementById('pu-cat');
+    var puCode=codeEl?codeEl.textContent.replace('—','').trim():(found?found.code:'');
+    var puCat=catEl?catEl.textContent.replace('—','').trim():(found?found.categorie:'');
+    data={code:puCode,categorie:puCat,designation:desig,annee:parseInt(annee),pu:parseFloat(prix)||0};
     sheet='pu'; store.pu.push(data);
   }
   else if(form==='eq'){
@@ -1131,10 +1656,54 @@ async function submitF(form) {
     const codeEqpt=v('un-codeEqpt'), codeUI=v('un-codeUI');
     data={machine,spec,codeEqpt,codeUI}; sheet='unite'; store.unite.push(data);
   }
+  else if(form==='pg'){
+    const machine=v('pg-machine'), action=v('pg-action').trim();
+    if(!machine||!action){toast('Sélectionnez une machine et saisissez une action.','error');return;}
+    const el=document.getElementById('pg-codeGlob');
+    const codeGlob=el?el.textContent.replace('—','').trim():'';
+    data={codeGlob,machine,action};
+    sheet='procglob';
+    store.procglob.push(data);
+    populateFilters();
+  }
+  else if(form==='pr'){
+    const machine=v('pr-machine'), spec=v('pr-spec'), actions=v('pr-actions').trim(), resp=v('pr-resp');
+    if(!machine||!actions||!resp){toast('Champs obligatoires manquants.','error');return;}
+    const codeActionEl=document.getElementById('pr-codeAction');
+    const codeAction=codeActionEl?codeActionEl.textContent.replace('—','').trim():'';
+    data={localisation:v('pr-loc'),codeAction,machine,spec,actions,
+          freq:parseFloat(v('pr-freq'))||null,repet:parseInt(v('pr-repet'))||null,
+          consommable:v('pr-conso'),qteNecessaire:v('pr-qteNec'),
+          prevision:v('pr-prev'),responsable:resp,codeResp:v('pr-codeResp')};
+    sheet='processus'; store.processus.push(data);
+    onPrMachine();
+  }
+  else if(form==='eq'){
+    const machine=v('eq-machine').trim(); if(!machine){toast('Saisissez le nom.','error');return;}
+    const code=machine.toUpperCase();
+    if(store.equipement.find(e=>e.code===code)){toast('Cet équipement existe déjà.','error');return;}
+    data={code,machine}; sheet='equipement'; store.equipement.push(data); initDropdowns();
+  }
+  else if(form==='un'){
+    const machine=v('un-machine'),spec=v('un-spec').trim();
+    if(!machine||!spec){toast('Champs obligatoires manquants.','error');return;}
+    const codeEqpt=v('un-codeEqpt'), codeUI=v('un-codeUI');
+    data={machine,spec,codeEqpt,codeUI}; sheet='unite'; store.unite.push(data);
+  }
+  else if(form==='pg'){
+    const machine=v('pg-machine'), action=v('pg-action').trim();
+    if(!machine||!action){toast('Sélectionnez une machine et saisissez une action.','error');return;}
+    const el=document.getElementById('pg-codeGlob');
+    const codeGlob=el?el.textContent.replace('—','').trim():'';
+    data={codeGlob,machine,action};
+    sheet='procglob';
+    store.procglob.push(data);
+    populateFilters();
+  }
   else if(form==='pr'){
     const machine=v('pr-machine'),spec=v('pr-ui'),actions=v('pr-actions').trim(),resp=v('pr-resp');
     if(!machine||!spec||!actions||!resp){toast('Champs obligatoires manquants.','error');return;}
-    data={localisation:v('pr-loc'),codeUI:v('pr-codeUI'),codeAction:v('pr-codeAction'),machine,spec,actions,freq:parseFloat(v('pr-freq'))||null,repet:parseInt(v('pr-repet'))||null,consommable:v('pr-conso'),qteNecessaire:v('pr-qteNec'),prevision:v('pr-prev'),responsable:resp,codeResp:v('pr-codeResp')};
+    data={localisation:v('pr-loc'),codeUI:(document.getElementById('pr-codeUI')||{}).textContent||'',codeAction:(document.getElementById('pr-codeAction')||{}).textContent||'',machine,spec,actions,freq:parseFloat(v('pr-freq'))||null,repet:parseInt(v('pr-repet'))||null,consommable:v('pr-conso'),qteNecessaire:v('pr-qteNec'),prevision:v('pr-prev'),responsable:resp,codeResp:v('pr-codeResp')};
     sheet='processus'; store.processus.push(data);
   }
 
@@ -1152,8 +1721,8 @@ async function submitF(form) {
 }
 
 async function submitMaintenance() {
-  const m=v('ma-machine'), spec=v('ma-ui'), date=v('ma-date'), loc=v('ma-loc');
-  if(!m||!spec){toast('Sélectionnez une machine et une unité.','error');return;}
+  const m=v('ma-machine'), date=v('ma-date'), loc=v('ma-loc');
+  if(!m){toast('Sélectionnez une machine.','error');return;}
   const rows=document.querySelectorAll('#ma-edit-tbody tr');
   if(!rows.length){toast('Aucune action dans le tableau.','error');return;}
 
@@ -1166,13 +1735,13 @@ async function submitMaintenance() {
     var allSels=row.querySelectorAll('.td-sel');
     var codeIntEl=row.querySelector('.td-auto:last-of-type');
     entries.push({
-      date:date,localisation:loc,machine:m,spec:spec,
+      date:date,localisation:loc,machine:m,spec:v('ma-spec'),
       actions:proc.actions||ca,
       codeAction:ca,
       nextDate:allInputs[0]?allInputs[0].value:'',
       poste:allSels[0]?allSels[0].value:'',
       responsable:allSels[1]?allSels[1].value:'',
-      conso:allSels[2]?allSels[2].value:'',
+      conso:(function(){var sp=row.querySelector('[data-conso]');return sp?sp.dataset.conso:'';}()),
       qte:allInputs[1]?allInputs[1].value:'',
       obs:allInputs[2]?allInputs[2].value:'',
       codeInt:codeIntEl?codeIntEl.textContent.trim():''
@@ -1202,10 +1771,11 @@ function clearF(form) {
     loc:['loc-nom','loc-code'],
     per:['per-immat','per-nom','per-poste','per-entite','per-codePoste','per-codeIndiv'],
     conso:['conso-cat','conso-desig','conso-code'],
-    pu:['pu-conso','pu-code','pu-cat','pu-annee','pu-prix'],
+    pu:['pu-conso','pu-annee','pu-prix'],
     eq:['eq-machine','eq-code'],
     un:['un-machine','un-spec','un-codeEqpt','un-codeUI'],
-    pr:['pr-loc','pr-machine','pr-ui','pr-codeUI','pr-codeAction','pr-actions','pr-freq','pr-repet','pr-conso','pr-qteNec','pr-prev','pr-resp','pr-codeResp'],
+    pg:['pg-machine','pg-action'],
+    pr:['pr-loc','pr-machine','pr-spec','pr-action-glob','pr-actions','pr-freq','pr-repet','pr-conso','pr-qteNec','pr-prev','pr-resp','pr-codeResp'],
     ma:['ma-loc','ma-machine','ma-ui']
   };
   (IDS[form]||[]).forEach(id=>{const el=document.getElementById(id);if(!el)return;el.tagName==='SELECT'?el.selectedIndex=0:el.value='';});
