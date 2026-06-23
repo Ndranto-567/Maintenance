@@ -1312,8 +1312,8 @@ function onMaMachine() {
   // Remplir les spécifications en cascade
   const specs=store.unite.filter(u=>u.machine===m);
   fillSel('ma-spec', specs, 'spec', 'spec');
-  // Charger les actions directement (toutes pour cette machine)
-  if(m) loadMaActions(m);
+  // Charger toutes les actions de la machine (spec sera filtré via onMaSpec)
+  if(m) buildMaChecklist(m, '');
 }
 
 function onMaSpec() {
@@ -1321,26 +1321,6 @@ function onMaSpec() {
   // Pre-filtrer visuellement si souhaite
 }
 
-function loadMaActions(m) {
-  const acts=store.processus.filter(p=>p.machine===m);
-  const list=document.getElementById('ma-checklist');
-  list.innerHTML='';
-  if(!acts.length){
-    list.innerHTML='<div style="color:var(--muted);padding:10px">Aucune action définie pour cette machine.</div>';
-    document.getElementById('ma-actions-zone').style.display='block';
-    return;
-  }
-  acts.forEach(function(a){
-    const item=document.createElement('label');
-    item.className='ma-check-item';
-    item.innerHTML='<input type="checkbox" value="'+esc(a.codeAction)+'" onchange="maItemToggle(this)">'+
-      '<div class="ma-check-label">'+
-      '<span class="ma-check-code">'+esc(a.codeAction)+'</span>'+
-      '<span class="ma-check-action">'+esc(a.actions||'')+'</span></div>';
-    list.appendChild(item);
-  });
-  document.getElementById('ma-actions-zone').style.display='block';
-}
 
 // onMaUI removed — actions loaded directly in onMaMachine
 function maItemToggle(cb){cb.closest('.ma-check-item').classList.toggle('selected',cb.checked);}
