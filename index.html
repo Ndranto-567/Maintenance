@@ -123,6 +123,10 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
 .modal-body{padding:16px;display:flex;flex-direction:column;gap:11px}
 .modal-ft{padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
 /* TOAST */
+.loader-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.loader-overlay.show{display:flex}
+.loader-spin{width:44px;height:44px;border:4px solid rgba(255,255,255,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+.loader-msg{color:#e2e8f0;font-size:13px;font-weight:500}
 .toast{position:fixed;bottom:18px;right:18px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:300;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;pointer-events:none;max-width:320px}
 .toast.show{opacity:1;transform:translateY(0)}
 .toast.success{border-left:3px solid var(--green)}
@@ -516,7 +520,7 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       </div>
       <div>
         <label class="flabel">Spécification <span class="req">*</span></label>
-        <select id="pr-spec" class="fsel"><option value="">— Sélectionner —</option></select>
+        <select id="pr-spec" class="fsel" onchange="filterProcessus()"><option value="">— Sélectionner —</option></select>
       </div>
       <div style="display:flex;gap:8px;align-items:flex-start">
         <div style="flex:1"><label class="flabel">Code Action</label><div id="pr-codeAction" style="font-family:var(--mono);font-size:11px;color:var(--accent);padding:5px 0;line-height:20px">—</div></div>
@@ -598,11 +602,11 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
       </div>
       <div>
         <label class="flabel">Machine/Éqpt <span class="req">*</span></label>
-        <select id="ma-machine" class="fsel" onchange="onMaMachine()"><option value="">— Sélectionner —</option></select>
+        <select id="ma-machine" class="fsel" onchange="onMaMachine();filterMaintenance()"><option value="">— Sélectionner —</option></select>
       </div>
       <div>
         <label class="flabel">Spécification</label>
-        <select id="ma-spec" class="fsel" onchange="onMaSpec()"><option value="">— Sélectionner —</option></select>
+        <select id="ma-spec" class="fsel" onchange="onMaSpec();filterMaintenance()"><option value="">— Sélectionner —</option></select>
       </div>
     </div>
     <!-- Actions pré-remplies depuis Processus -->
@@ -650,7 +654,13 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
 <div class="page-data"><div class="data-sec">
     <div class="data-hd"><h2>Interventions enregistrées</h2>
       <div class="data-controls">
-        <input class="search" placeholder="Rechercher..." oninput="filterTbl('maintenance',this.value)">
+        <select id="filter-ma-machine" class="search" style="width:130px" onchange="filterMaintenance()">
+          <option value="">— Machine —</option>
+        </select>
+        <select id="filter-ma-spec" class="search" style="width:160px" onchange="filterMaintenance()">
+          <option value="">— Spécification —</option>
+        </select>
+        <input class="search" id="search-maintenance" placeholder="Rechercher..." oninput="filterMaintenance()">
         <button class="btn btn-outline btn-sm" onclick="loadData('maintenance')">↻</button>
       </div>
     </div>
@@ -739,6 +749,10 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
   </div>
 </div>
 
+<div class="loader-overlay" id="loaderOverlay">
+  <div class="loader-spin"></div>
+  <div class="loader-msg" id="loaderMsg">Enregistrement en cours...</div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -862,9 +876,9 @@ async function apiPost(sheet,data) {
 
 async function loadData(sheet) {
   if(cfg[sheet]&&cfg[sheet].trim()) {
-    showSync(true);
+    showLoader(true,'Chargement '+sheet+'...');
     const d=await apiGet(sheet);
-    showSync(false);
+    showLoader(false);
     if(d&&Array.isArray(d)) { store[sheet]=d; if(['equipement','unite','processus','personnel','localisation','consommable'].includes(sheet)) initDropdowns(); }
   }
   renderTbl(sheet,store[sheet]||[]);
@@ -892,6 +906,7 @@ function renderTbl(sheet,data) {
   if(!data||!data.length) { tb.innerHTML='<tr class="empty-row"><td colspan="'+(COL_COUNT[sheet]||4)+'">Aucune donnée.</td></tr>'; return; }
   const rowAttr = {
     procglob:    r=>'data-machine="'+esc(r.machine||'')+'"',
+    maintenance: r=>'data-machine="'+esc(r.machine||'')+'" data-spec="'+esc(r.spec||'')+'"',
     consommable: r=>'data-cat="'+esc(r.categorie||'')+'"',
     unite:       r=>'data-machine="'+esc(r.machine||'')+'"',
     processus:   r=>'data-machine="'+esc(r.machine||'')+'" data-spec="'+esc(r.spec||'')+'"'
@@ -899,6 +914,7 @@ function renderTbl(sheet,data) {
   const attrFn = rowAttr[sheet] || (r=>'');
   tb.innerHTML=data.map(r=>'<tr '+attrFn(r)+'>'+RENDERS[sheet](r)+'</tr>').join('');
   if(sheet==='procglob') filterProcGlob();
+  if(sheet==='maintenance') filterMaintenance();
   if(sheet==='consommable') filterConsommable();
   if(sheet==='unite') filterUnite();
   if(sheet==='processus') filterProcessus();
@@ -1007,19 +1023,6 @@ document.getElementById('un-spec').addEventListener('input',genUnCode);
 // ============================================================
 // FORM: PROCESSUS
 // ============================================================
-function onPrMachine() {
-  const m=v('pr-machine');
-  // Generate code action
-  const codeActionEl=document.getElementById('pr-codeAction');
-  if(m) {
-    const n=store.processus.filter(p=>p.machine===m).length+1;
-    const pfx=m.replace(/[^A-Za-z0-9]/g,'').substring(0,6).toUpperCase();
-    if(codeActionEl) codeActionEl.textContent=pfx+String(n).padStart(2,'0');
-  } else {
-    if(codeActionEl) codeActionEl.textContent='—';
-  }
-  filterProcessus();
-}
 // onPrUI removed
 function onPrResp() {
   const resp=v('pr-resp');
@@ -1030,86 +1033,17 @@ function onPrResp() {
 // ============================================================
 // PROCESSUS GLOBAL
 // ============================================================
-function onPgMachine() {
-  const m = v('pg-machine');
-  const el = document.getElementById('pg-codeGlob');
-  if (!m) { if(el) el.textContent='—'; return; }
-  const pfx = m.replace(/[^A-Za-z0-9]/g,'').substring(0,4).toUpperCase();
-  const n = store.procglob.filter(p=>p.machine===m).length + 1;
-  if(el) el.textContent = pfx + 'G' + String(n).padStart(2,'0');
-}
 
-function filterProcGlob() {
-  const machine = (document.getElementById('filter-pg-machine')||{}).value||'';
-  const q = ((document.getElementById('search-procglob')||{}).value||'').toLowerCase();
-  const tb = document.getElementById('tb-procglob');
-  if(!tb) return;
-  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
-    const machOk = !machine || (row.dataset.machine||'')===machine;
-    const qOk    = !q || row.textContent.toLowerCase().includes(q);
-    row.style.display = (machOk&&qOk)?'':'none';
-  });
-}
 
 // ============================================================
 // PROCESSUS DETAIL
 // ============================================================
-function onPrMachine() {
-  const m = v('pr-machine');
-  // Cascade spécifications
-  const specs = store.unite.filter(u=>u.machine===m);
-  fillSel('pr-spec', specs, 'spec', 'spec');
-  // Cascade actions globales pour cette machine
-  const globs = store.procglob.filter(g=>g.machine===m);
-  const sel = document.getElementById('pr-action-glob');
-  if(sel) {
-    sel.innerHTML = '<option value="">— Choisir depuis Processus Global —</option>';
-    globs.forEach(function(g){
-      const o=document.createElement('option');
-      o.value=g.action; o.textContent=g.action; sel.appendChild(o);
-    });
-  }
-  // Générer code action
-  const el = document.getElementById('pr-codeAction');
-  if(m) {
-    const n = store.processus.filter(p=>p.machine===m).length+1;
-    const pfx = m.replace(/[^A-Za-z0-9]/g,'').substring(0,6).toUpperCase();
-    if(el) el.textContent = pfx+String(n).padStart(2,'0');
-  } else {
-    if(el) el.textContent = '—';
-  }
-  filterProcessus();
-}
 
-function onPrActionGlob() {
-  const val = v('pr-action-glob');
-  if(val) set('pr-actions', val);
-}
 
 // ============================================================
 // MAINTENANCE — chargement automatique des actions
 // ============================================================
-function onMaMachine() {
-  const m = v('ma-machine');
-  document.getElementById('ma-actions-zone').style.display='none';
-  document.getElementById('ma-table-zone').style.display='none';
-  document.getElementById('ma-submit-bar').style.display='none';
-  document.getElementById('ma-checklist').innerHTML='';
-  // Cascade spécifications
-  const specs = store.unite.filter(u=>u.machine===m);
-  fillSel('ma-spec', specs, 'spec', 'spec');
-  if(m) buildMaChecklist(m);
-}
 
-function onMaSpec() {
-  const m    = v('ma-machine');
-  const spec = v('ma-spec');
-  // Reset tableau si déjà généré
-  document.getElementById('ma-table-zone').style.display='none';
-  document.getElementById('ma-submit-bar').style.display='none';
-  document.getElementById('ma-checklist').innerHTML='';
-  if(m) buildMaChecklist(m, spec);
-}
 
 function buildMaChecklist(m, spec) {
   // Filtrer par machine ET spécification si choisie
@@ -1160,84 +1094,10 @@ function buildMaChecklist(m, spec) {
 // ============================================================
 // FILTER FUNCTIONS
 // ============================================================
-function filterConsommable() {
-  var cat  = (document.getElementById('filter-conso-cat')||{}).value||'';
-  var q    = ((document.getElementById('search-conso')||{}).value||'').toLowerCase();
-  var tb   = document.getElementById('tb-consommable');
-  if(!tb) return;
-  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
-    var txt  = row.textContent.toLowerCase();
-    var rowCat = row.dataset.cat||'';
-    var catOk  = !cat || rowCat === cat;
-    var qOk    = !q   || txt.includes(q);
-    row.style.display = (catOk && qOk) ? '' : 'none';
-  });
-}
 
-function filterUnite() {
-  var machine = (document.getElementById('filter-unite-machine')||{}).value||'';
-  var q       = ((document.getElementById('search-unite')||{}).value||'').toLowerCase();
-  var tb      = document.getElementById('tb-unite');
-  if(!tb) return;
-  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
-    var txt     = row.textContent.toLowerCase();
-    var rowMach = row.dataset.machine||'';
-    var machOk  = !machine || rowMach === machine;
-    var qOk     = !q       || txt.includes(q);
-    row.style.display = (machOk && qOk) ? '' : 'none';
-  });
-}
 
-function filterProcessus() {
-  var machine = v('pr-machine');
-  var q       = ((document.getElementById('search-processus')||{}).value||'').toLowerCase();
-  var tb      = document.getElementById('tb-processus');
-  if(!tb) return;
-  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
-    var txt     = row.textContent.toLowerCase();
-    var rowMach = row.dataset.machine||'';
-    var machOk  = !machine || rowMach === machine;
-    var qOk     = !q       || txt.includes(q);
-    row.style.display = (machOk && qOk) ? '' : 'none';
-  });
-}
 
-function populateFilters() {
-  // Processus Global machine filter
-  var pgSel=document.getElementById('filter-pg-machine');
-  if(pgSel){
-    var pgMachines=[...new Set(store.procglob.map(function(p){return p.machine;}).filter(Boolean))].sort();
-    pgSel.innerHTML='<option value="">— Toutes —</option>';
-    pgMachines.forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=m;pgSel.appendChild(o);});
-  }
-  // Consommable catégories
-  var catSel = document.getElementById('filter-conso-cat');
-  if(catSel) {
-    var cats = [...new Set(store.consommable.map(function(c){return c.categorie;}).filter(Boolean))].sort();
-    catSel.innerHTML = '<option value="">— Toutes catégories —</option>';
-    cats.forEach(function(c){
-      var o=document.createElement('option'); o.value=c; o.textContent=c; catSel.appendChild(o);
-    });
-  }
-  // Unite machine filter
-  var unSel = document.getElementById('filter-unite-machine');
-  if(unSel) {
-    var machines = [...new Set(store.unite.map(function(u){return u.machine;}).filter(Boolean))].sort();
-    unSel.innerHTML = '<option value="">— Toutes —</option>';
-    machines.forEach(function(m){
-      var o=document.createElement('option'); o.value=m; o.textContent=m; unSel.appendChild(o);
-    });
-  }
-  // Entité responsable datalist
-  var entiteList = document.getElementById('entite-list');
-  if(entiteList) {
-    var entites = [...new Set(store.personnel.map(function(p){return p.entite;}).filter(Boolean))];
-    entiteList.innerHTML = '';
-    entites.forEach(function(e){
-      var o=document.createElement('option'); o.value=e; entiteList.appendChild(o);
-    });
-  }
-}
+
 
 // ============================================================
 // FORM: PU CONSOMMABLE
@@ -1276,6 +1136,9 @@ function onPrMachine() {
   // Cascade spécifications
   const specs = store.unite.filter(u=>u.machine===m);
   fillSel('pr-spec', specs, 'spec', 'spec');
+  // Reset spec selection to show all on machine change
+  const specSel = document.getElementById('pr-spec');
+  if(specSel) specSel.selectedIndex = 0;
   // Cascade actions globales pour cette machine
   const globs = store.procglob.filter(g=>g.machine===m);
   const sel = document.getElementById('pr-action-glob');
@@ -1306,73 +1169,8 @@ function onPrActionGlob() {
 // ============================================================
 // MAINTENANCE — chargement automatique des actions
 // ============================================================
-function onMaMachine() {
-  const m = v('ma-machine');
-  document.getElementById('ma-actions-zone').style.display='none';
-  document.getElementById('ma-table-zone').style.display='none';
-  document.getElementById('ma-submit-bar').style.display='none';
-  document.getElementById('ma-checklist').innerHTML='';
-  // Cascade spécifications
-  const specs = store.unite.filter(u=>u.machine===m);
-  fillSel('ma-spec', specs, 'spec', 'spec');
-  if(m) buildMaChecklist(m);
-}
 
-function onMaSpec() {
-  const m    = v('ma-machine');
-  const spec = v('ma-spec');
-  // Reset tableau si déjà généré
-  document.getElementById('ma-table-zone').style.display='none';
-  document.getElementById('ma-submit-bar').style.display='none';
-  document.getElementById('ma-checklist').innerHTML='';
-  if(m) buildMaChecklist(m, spec);
-}
 
-function buildMaChecklist(m, spec) {
-  // Filtrer par machine ET spécification si choisie
-  let acts;
-  if(spec) {
-    // Spécification choisie — actions de cette spécification uniquement
-    acts = store.processus.filter(function(p){
-      return p.machine===m && p.spec===spec;
-    });
-    // Si aucune action pour cette spec, élargir à la machine sans spec
-    if(!acts.length) {
-      acts = store.processus.filter(function(p){
-        return p.machine===m && (!p.spec || p.spec==='');
-      });
-    }
-  } else {
-    // Pas de spécification — toutes les actions de la machine
-    acts = store.processus.filter(function(p){ return p.machine===m; });
-  }
-  // Fallback sur processus global si toujours vide
-  if(!acts.length) {
-    acts = store.procglob.filter(function(p){return p.machine===m;}).map(function(g){
-      return {codeAction: g.codeGlob, actions: g.action, machine: g.machine,
-              freq: null, repet: null, responsable: '', consommable: ''};
-    });
-  }
-  const list = document.getElementById('ma-checklist');
-  list.innerHTML='';
-  if(!acts.length) {
-    list.innerHTML='<div style="color:var(--muted);padding:10px">Aucune action définie. Renseignez le Processus Détail.</div>';
-    document.getElementById('ma-actions-zone').style.display='block';
-    return;
-  }
-  // Tout pré-cocher par défaut
-  acts.forEach(function(a){
-    const item=document.createElement('label');
-    item.className='ma-check-item selected';
-    item.innerHTML='<input type="checkbox" value="'+esc(a.codeAction)+'" checked onchange="maItemToggle(this)">'+
-      '<div class="ma-check-label">'+
-      '<span class="ma-check-code">'+esc(a.codeAction)+'</span>'+
-      '<span class="ma-check-action">'+esc(a.actions||'')+'</span>'+
-      (a.consommable?'<span style="font-size:10px;color:var(--muted)">🧴 '+esc(a.consommable)+'</span>':'')+'</div>';
-    list.appendChild(item);
-  });
-  document.getElementById('ma-actions-zone').style.display='block';
-}
 
 // ============================================================
 // FILTER FUNCTIONS
@@ -1388,6 +1186,23 @@ function filterConsommable() {
     var catOk  = !cat || rowCat === cat;
     var qOk    = !q   || txt.includes(q);
     row.style.display = (catOk && qOk) ? '' : 'none';
+  });
+}
+
+function filterMaintenance() {
+  var machine = (document.getElementById('filter-ma-machine')||{}).value||'';
+  var spec    = (document.getElementById('filter-ma-spec')||{}).value||'';
+  var q       = ((document.getElementById('search-maintenance')||{}).value||'').toLowerCase();
+  var tb      = document.getElementById('tb-maintenance');
+  if(!tb) return;
+  tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
+    var txt     = row.textContent.toLowerCase();
+    var rowMach = row.dataset.machine||'';
+    var rowSpec = row.dataset.spec||'';
+    var machOk  = !machine || rowMach === machine;
+    var specOk  = !spec    || rowSpec === spec;
+    var qOk     = !q       || txt.includes(q);
+    row.style.display = (machOk && specOk && qOk) ? '' : 'none';
   });
 }
 
@@ -1407,15 +1222,18 @@ function filterUnite() {
 
 function filterProcessus() {
   var machine = v('pr-machine');
+  var spec    = v('pr-spec');
   var q       = ((document.getElementById('search-processus')||{}).value||'').toLowerCase();
   var tb      = document.getElementById('tb-processus');
   if(!tb) return;
   tb.querySelectorAll('tr:not(.empty-row)').forEach(function(row){
     var txt     = row.textContent.toLowerCase();
     var rowMach = row.dataset.machine||'';
+    var rowSpec = row.dataset.spec||'';
     var machOk  = !machine || rowMach === machine;
+    var specOk  = !spec    || rowSpec === spec;
     var qOk     = !q       || txt.includes(q);
-    row.style.display = (machOk && qOk) ? '' : 'none';
+    row.style.display = (machOk && specOk && qOk) ? '' : 'none';
   });
 }
 
@@ -1444,6 +1262,19 @@ function populateFilters() {
     machines.forEach(function(m){
       var o=document.createElement('option'); o.value=m; o.textContent=m; unSel.appendChild(o);
     });
+  }
+  // Maintenance history filters
+  var maMachSel = document.getElementById('filter-ma-machine');
+  if(maMachSel) {
+    var maMachs = [...new Set(store.maintenance.map(function(m){return m.machine;}).filter(Boolean))].sort();
+    maMachSel.innerHTML = '<option value="">— Machine —</option>';
+    maMachs.forEach(function(m){var o=document.createElement('option');o.value=m;o.textContent=m;maMachSel.appendChild(o);});
+  }
+  var maSpecSel = document.getElementById('filter-ma-spec');
+  if(maSpecSel) {
+    var maSpecs = [...new Set(store.maintenance.map(function(m){return m.spec;}).filter(Boolean))].sort();
+    maSpecSel.innerHTML = '<option value="">— Spécification —</option>';
+    maSpecs.forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;maSpecSel.appendChild(o);});
   }
   // Entité responsable datalist
   var entiteList = document.getElementById('entite-list');
@@ -1694,12 +1525,7 @@ async function submitF(form) {
     if(store.equipement.find(e=>e.code===code)){toast('Cet équipement existe déjà.','error');return;}
     data={code,machine}; sheet='equipement'; store.equipement.push(data); initDropdowns();
   }
-  else if(form==='un'){
-    const machine=v('un-machine'),spec=v('un-spec').trim();
-    if(!machine||!spec){toast('Champs obligatoires manquants.','error');return;}
-    const codeEqpt=v('un-codeEqpt'), codeUI=v('un-codeUI');
-    data={machine,spec,codeEqpt,codeUI}; sheet='unite'; store.unite.push(data);
-  }
+
   else if(form==='pg'){
     const machine=v('pg-machine'), action=v('pg-action').trim();
     if(!machine||!action){toast('Sélectionnez une machine et saisissez une action.','error');return;}
@@ -1759,7 +1585,7 @@ async function submitMaintenance() {
 
   let saved=0,errors=0;
   const hasURL=cfg.maintenance&&cfg.maintenance.trim();
-  showSync(true);
+  showLoader(true,'Enregistrement des interventions...');
   for(const entry of entries){
     store.maintenance.push(entry);
     if(hasURL){
@@ -1767,7 +1593,7 @@ async function submitMaintenance() {
       catch(e){errors++;}
     } else { saved++; }
   }
-  showSync(false);
+  showLoader(false);
   if(!hasURL) toast(saved+' intervention(s) sauvegardée(s) localement.','info');
   else if(!errors) toast(saved+' intervention(s) enregistrée(s) dans Google Sheets ✓','success');
   else toast(saved+' sauvegardée(s) localement, '+errors+' erreur(s) — voir console F12','error');
@@ -1834,6 +1660,17 @@ function v(id){return(document.getElementById(id)||{}).value||'';}
 function set(id,val){const el=document.getElementById(id);if(el)el.value=val;}
 function today(){return new Date().toISOString().split('T')[0];}
 function showSync(on){document.getElementById('sync').style.display=on?'inline':'none';}
+function showLoader(on, msg) {
+  var ov = document.getElementById('loaderOverlay');
+  var lm = document.getElementById('loaderMsg');
+  if(!ov) return;
+  if(on) {
+    if(lm) lm.textContent = msg || 'Chargement...';
+    ov.classList.add('show');
+  } else {
+    ov.classList.remove('show');
+  }
+}
 function toast(msg,type){
   const t=document.getElementById('toast');
   t.textContent=msg;t.className='toast show '+(type||'info');
