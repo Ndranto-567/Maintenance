@@ -6,13 +6,13 @@
 <title>Maintenance</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;background:#0f1117;color:#e2e8f0;font-size:14px}
+body{font-family:Inter,system-ui,sans-serif;background:#0f1117;color:#e2e8f0;font-size:14px;display:flex;flex-direction:column;min-height:100vh}
 :root{
   --bg:#0f1117;--card:#1a1d2e;--border:#2a2f47;
   --accent:#3b82f6;--green:#10b981;--orange:#f59e0b;--red:#ef4444;
   --muted:#94a3b8;--mono:'JetBrains Mono',monospace
 }
-#app{display:flex;min-height:100vh}
+#app{display:flex;height:100vh;overflow:hidden}
 /* SIDEBAR */
 .sidebar{width:230px;background:#13151e;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:.2s}
 .logo{padding:16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
@@ -28,13 +28,13 @@ nav{padding:10px 8px;flex:1;overflow-y:auto}
 .dot{width:7px;height:7px;border-radius:50%;background:#475569;flex-shrink:0}
 .dot.on{background:var(--green);box-shadow:0 0 5px var(--green)}
 /* MAIN */
-.main{margin-left:230px;flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.topbar{height:50px;background:#13151e;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;position:sticky;top:0;z-index:50}
+.main{margin-left:230px;flex:1;display:grid;grid-template-rows:50px 1fr;height:100vh;overflow:hidden}
+.topbar{height:50px;background:#13151e;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;z-index:50}
 .topbar-title{font-weight:600;font-size:14px;flex:1}
 .sync{font-size:12px;color:var(--accent)}
 .menu-btn{display:none;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
 /* PAGES */
-.page{display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;max-width:1300px;width:100%}
+.page{display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;max-width:1300px;width:100%;background:var(--bg)}
 .page.active{display:flex}
 .page-hd{padding:10px 18px 0;flex-shrink:0}
 .page-hd h1{font-size:15px;font-weight:700;margin-bottom:1px}
@@ -192,7 +192,7 @@ code{font-family:var(--mono);background:rgba(255,255,255,.06);padding:1px 5px;bo
   <div class="topbar-title" id="topTitle">Localisation</div>
   <span class="sync" id="sync" style="display:none">↻ Sync...</span>
 </header>
-<div id="pages" style="display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0">
+<div id="pages" style="display:flex;flex-direction:column;overflow:hidden;min-height:0;background:var(--bg)">
 
 <!-- ===== LOCALISATION ===== -->
 <div class="page active" id="page-localisation">
