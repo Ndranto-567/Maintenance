@@ -183,7 +183,7 @@ code{font-family:var(--mono);background:rgba(83,74,183,.08);color:#3C3489;paddin
     <div class="nav-item" data-page="gantt">📅 Planification</div>
     <div class="nav-item" data-page="admin">⚙ Administration</div>
   </nav>
-  <div class="sidebar-ft"><span class="dot" id="dot"></span><span id="conn-txt">Mode local</span><span style="margin-left:auto;font-size:10px;color:#aaa;font-family:var(--mono)">v2.47</span></div>
+  <div class="sidebar-ft"><span class="dot" id="dot"></span><span id="conn-txt">Mode local</span><span style="margin-left:auto;font-size:10px;color:#aaa;font-family:var(--mono)">v2.48</span></div>
 </aside>
 
 <div class="main">
@@ -1846,26 +1846,50 @@ function buildGantt() {
 
     // For each month, determine cell status
     var cells = months.map(function(mo){
-      // Check if intervention was DONE this month
+      var monthStart = new Date(mo.year, mo.month, 1);
+      var monthEnd   = new Date(mo.year, mo.month+1, 0);
+
+      // 1. Check if intervention was DONE this month (from maintenance)
       var done = maRecords.filter(function(m){
         if(!m.date) return false;
-        var d = new Date(m.date+'T00:00:00');
-        return d.getFullYear()===mo.year && d.getMonth()===mo.month;
+        var d = parseDate(m.date) || new Date(m.date+'T00:00:00');
+        return d && d.getFullYear()===mo.year && d.getMonth()===mo.month;
       });
       if(done.length) return {status:'done', count:done.length};
 
-      // Check if intervention is PLANNED (nextDate) this month
+      // 2. Check nextDate from maintenance records
       var planned = maRecords.filter(function(m){
         if(!m.nextDate) return false;
         var nd = parseDate(m.nextDate);
-        if(!nd) return false;
-        return nd.getFullYear()===mo.year && nd.getMonth()===mo.month;
+        return nd && nd.getFullYear()===mo.year && nd.getMonth()===mo.month;
       });
       if(planned.length){
-        // Check if late (nextDate passed and no done record this month)
-        var cellDate = new Date(mo.year, mo.month+1, 0); // last day of month
-        var isLate = cellDate < today;
+        var isLate = monthEnd < today;
         return {status: isLate ? 'late' : 'plan', count:planned.length};
+      }
+
+      // 3. No maintenance record — use processus freq/repet to project
+      if(proc.repet && Number(proc.repet) > 0) {
+        // Find last maintenance date for this action
+        var lastDone = null;
+        maRecords.forEach(function(m){
+          if(!m.date) return;
+          var d = parseDate(m.date) || new Date(m.date+'T00:00:00');
+          if(d && (!lastDone || d > lastDone)) lastDone = d;
+        });
+        if(lastDone) {
+          // Project next dates forward using repet interval
+          var projected = new Date(lastDone.getTime());
+          var repetMs = Number(proc.repet) * 86400000;
+          for(var i=0; i<24; i++) {
+            projected = new Date(projected.getTime() + repetMs);
+            if(projected.getFullYear()===mo.year && projected.getMonth()===mo.month) {
+              var isLate = monthEnd < today;
+              return {status: isLate ? 'late' : 'plan'};
+            }
+            if(projected > monthEnd) break;
+          }
+        }
       }
       return {status:'empty'};
     });
@@ -1937,11 +1961,12 @@ function exportGanttExcel() {
     rows.push(cols.join('\t'));
   });
   var csv = rows.join('\n');
-  var blob = new Blob(['\ufeff'+csv],{type:'text/plain;charset=utf-8'});
+  // Use .csv extension for proper Excel import
+  var blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  a.href=url; a.download='Planification_Gantt.xls'; a.click();
-  URL.revokeObjectURL(url);
+  a.href=url; a.download='Planification_Gantt.csv'; a.click();
+  setTimeout(function(){URL.revokeObjectURL(url);}, 1000);
   toast('Export Excel téléchargé.','success');
 }
 
