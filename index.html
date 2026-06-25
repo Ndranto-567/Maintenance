@@ -183,7 +183,7 @@ code{font-family:var(--mono);background:rgba(83,74,183,.08);color:#3C3489;paddin
     <div class="nav-item" data-page="gantt">📅 Planification</div>
     <div class="nav-item" data-page="admin">⚙ Administration</div>
   </nav>
-  <div class="sidebar-ft"><span class="dot" id="dot"></span><span id="conn-txt">Mode local</span><span style="margin-left:auto;font-size:10px;color:#aaa;font-family:var(--mono)">v2.48</span></div>
+  <div class="sidebar-ft"><span class="dot" id="dot"></span><span id="conn-txt">Mode local</span><span style="margin-left:auto;font-size:10px;color:#aaa;font-family:var(--mono)">v2.51</span></div>
 </aside>
 
 <div class="main">
@@ -469,6 +469,8 @@ code{font-family:var(--mono);background:rgba(83,74,183,.08);color:#3C3489;paddin
   </div>
 </div>
 
+</div>
+
 <!-- ===== PROCESSUS GLOBAL ===== -->
 <div class="page" id="page-procglob">
   <div class="page-hd">
@@ -518,7 +520,7 @@ code{font-family:var(--mono);background:rgba(83,74,183,.08);color:#3C3489;paddin
 </div>
 
 <!-- ===== PROCESSUS ===== -->
-</div><div class="page" id="page-processus">
+<div class="page" id="page-processus">
   <div class="page-hd"><h1>Processus de Maintenance</h1><p>Actions préventives par catégorie d'équipement.<br><small style="color:var(--muted)">Code Action = Machine + numéro 2 chiffres (ex: CAMION01)</small></p></div>
 <div class="page-form">
   <div class="card">
@@ -595,55 +597,6 @@ code{font-family:var(--mono);background:rgba(83,74,183,.08);color:#3C3489;paddin
     </div>
     <div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Localisation</th><th>Code Action</th><th>Machine/Éqpt</th><th>Spécification</th><th>Actions</th><th>Fréq/an</th><th>Répét.(j)</th><th>Consommable</th><th>Qté nec.</th><th>Prévision</th><th>Responsable</th></tr></thead>
     <tbody id="tb-processus"></tbody></table></div>
-  </div>
-</div>
-
-
-<!-- ===== GANTT ===== -->
-<div class="page" id="page-gantt">
-  <div class="page-hd">
-    <h1>Planification des Interventions</h1>
-    <p>Diagramme de Gantt — vue mensuelle des interventions planifiées et réalisées.</p>
-  </div>
-  <div class="page-form">
-    <div class="card">
-      <div class="fgrid">
-        <div>
-          <label class="flabel">Date début <span class="req">*</span></label>
-          <input id="gantt-from" class="finput" type="date">
-        </div>
-        <div>
-          <label class="flabel">Date fin <span class="req">*</span></label>
-          <input id="gantt-to" class="finput" type="date">
-        </div>
-        <div>
-          <label class="flabel">Voiture/Machine/Matériels</label>
-          <select id="gantt-machine" class="fsel">
-            <option value="">— Toutes —</option>
-          </select>
-        </div>
-        <div style="display:flex;align-items:flex-end;gap:8px">
-          <button class="btn btn-primary" onclick="buildGantt()">📅 Générer</button>
-          <button class="btn btn-outline" onclick="exportGanttExcel()">⬇ Export Excel</button>
-        </div>
-      </div>
-      <div style="display:flex;gap:16px;font-size:11.5px;color:var(--muted);margin-top:6px;flex-wrap:wrap">
-        <span><span style="display:inline-block;width:12px;height:12px;background:#10b981;border-radius:2px;margin-right:4px;vertical-align:middle"></span>Réalisée</span>
-        <span><span style="display:inline-block;width:12px;height:12px;background:#3b82f6;border-radius:2px;margin-right:4px;vertical-align:middle"></span>Planifiée</span>
-        <span><span style="display:inline-block;width:12px;height:12px;background:#f59e0b;border-radius:2px;margin-right:4px;vertical-align:middle"></span>En retard</span>
-      </div>
-    </div>
-  </div>
-  <div class="page-data">
-    <div id="gantt-container" style="overflow-x:auto">
-      <div id="gantt-empty" style="color:var(--muted);padding:30px;text-align:center">
-        Sélectionnez une période et cliquez sur "Générer".
-      </div>
-      <table id="gantt-table" class="tbl gantt-tbl" style="display:none;min-width:100%">
-        <thead id="gantt-thead"></thead>
-        <tbody id="gantt-tbody"></tbody>
-      </table>
-    </div>
   </div>
 </div>
 
@@ -731,8 +684,58 @@ code{font-family:var(--mono);background:rgba(83,74,183,.08);color:#3C3489;paddin
   </div>
 </div>
 
+</div>
+
+<!-- ===== GANTT ===== -->
+<div class="page" id="page-gantt">
+  <div class="page-hd">
+    <h1>Planification des Interventions</h1>
+    <p>Diagramme de Gantt — vue mensuelle des interventions planifiées et réalisées.</p>
+  </div>
+  <div class="page-form">
+    <div class="card">
+      <div class="fgrid">
+        <div>
+          <label class="flabel">Date début <span class="req">*</span></label>
+          <input id="gantt-from" class="finput" type="date">
+        </div>
+        <div>
+          <label class="flabel">Date fin <span class="req">*</span></label>
+          <input id="gantt-to" class="finput" type="date">
+        </div>
+        <div>
+          <label class="flabel">Voiture/Machine/Matériels</label>
+          <select id="gantt-machine" class="fsel">
+            <option value="">— Toutes —</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:8px">
+          <button class="btn btn-primary" onclick="buildGantt()">📅 Générer</button>
+          <button class="btn btn-outline" onclick="exportGanttExcel()">⬇ Export Excel</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;font-size:11.5px;color:var(--muted);margin-top:6px;flex-wrap:wrap">
+        <span><span style="display:inline-block;width:12px;height:12px;background:#10b981;border-radius:2px;margin-right:4px;vertical-align:middle"></span>Réalisée</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:#3b82f6;border-radius:2px;margin-right:4px;vertical-align:middle"></span>Planifiée</span>
+        <span><span style="display:inline-block;width:12px;height:12px;background:#f59e0b;border-radius:2px;margin-right:4px;vertical-align:middle"></span>En retard</span>
+      </div>
+    </div>
+  </div>
+  <div class="page-data">
+    <div id="gantt-container" style="overflow-x:auto">
+      <div id="gantt-empty" style="color:var(--muted);padding:30px;text-align:center">
+        Sélectionnez une période et cliquez sur "Générer".
+      </div>
+      <table id="gantt-table" class="tbl gantt-tbl" style="display:none;min-width:100%">
+        <thead id="gantt-thead"></thead>
+        <tbody id="gantt-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- ===== ADMIN ===== -->
-</div><div class="page" id="page-admin">
+<div class="page" id="page-admin">
   <div class="page-hd"><h1>Administration</h1><p>Configuration des URLs Google Apps Script.</p></div>
 <div class="page-form">
   <div class="notice">ℹ️ &nbsp;Une seule URL Apps Script suffit si vous utilisez un seul déploiement pour toutes les feuilles.</div>
