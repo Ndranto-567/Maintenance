@@ -185,7 +185,7 @@ code{font-family:var(--mono);background:rgba(83,74,183,.08);color:#3C3489;paddin
     <div class="nav-item" data-page="budget">💶 Budget</div>
     <div class="nav-item" data-page="admin">⚙ Administration</div>
   </nav>
-  <div class="sidebar-ft"><span class="dot" id="dot"></span><span id="conn-txt">Mode local</span><span style="margin-left:auto;font-size:10px;color:#aaa;font-family:var(--mono)">v2.53</span></div>
+  <div class="sidebar-ft"><span class="dot" id="dot"></span><span id="conn-txt">Mode local</span><span style="margin-left:auto;font-size:10px;color:#aaa;font-family:var(--mono)">v2.54</span></div>
 </aside>
 
 <div class="main">
@@ -2021,7 +2021,7 @@ function exportGanttExcel() {
   var rows = [];
   // Header
   var ths = table.querySelectorAll('thead tr th');
-  rows.push([...ths].map(function(th){return th.textContent.replace(/\n/g,' ').replace(/([A-Za-zéûô]+)(\d{4})/,'$1 $2').trim();}).join('\t'));
+  rows.push([...ths].map(function(th){return th.textContent.replace(/\n/g,' ').replace(/(\D+)(\d{4})/,'$1 $2').trim();}).join('\t'));
   // Body
   table.querySelectorAll('tbody tr').forEach(function(tr){
     var cols = [...tr.querySelectorAll('td')].map(function(td){
@@ -2223,8 +2223,8 @@ function tableToData(tableId) {
   var data = [];
   var ths = table.querySelectorAll('thead tr th');
   data.push([...ths].map(function(th){
-    return th.textContent.replace(/
-/g,' ').trim();
+    return th.textContent.replace(/\n/g,' ').trim();
+
   }));
   table.querySelectorAll('tbody tr').forEach(function(tr){
     var cols = [...tr.querySelectorAll('td')].map(function(td){
@@ -2245,7 +2245,7 @@ function tableToData(tableId) {
 function exportCSV(tableId, filename) {
   var data = tableToData(tableId);
   if(!data){toast('Generez d abord le tableau.','error');return;}
-  var csv = data.map(function(row){return row.join('	');}).join('
+  var csv = data.map(function(row){return row.join('\t');}).join('
 ');
   var blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
   var url = URL.createObjectURL(blob);
