@@ -183,7 +183,7 @@ code{font-family:var(--mono);background:rgba(83,74,183,.08);color:#3C3489;paddin
     <div class="nav-item" data-page="gantt">📅 Planification</div>
     <div class="nav-item" data-page="admin">⚙ Administration</div>
   </nav>
-  <div class="sidebar-ft"><span class="dot" id="dot"></span><span id="conn-txt">Mode local</span><span style="margin-left:auto;font-size:10px;color:#aaa;font-family:var(--mono)">v2.51</span></div>
+  <div class="sidebar-ft"><span class="dot" id="dot"></span><span id="conn-txt">Mode local</span><span style="margin-left:auto;font-size:10px;color:#aaa;font-family:var(--mono)">v2.52</span></div>
 </aside>
 
 <div class="main">
@@ -1926,17 +1926,23 @@ function buildGantt() {
 
 function parseDate(str) {
   if(!str) return null;
-  // Formats: YYYY-MM-DD or DD/MM/YYYY
-  if(str.includes('-')) {
-    var d = new Date(str+'T00:00:00');
-    return isNaN(d.getTime()) ? null : d;
+  str = String(str).trim();
+  // Already a Date object serialized
+  var d = new Date(str);
+  if(!isNaN(d.getTime())) {
+    // Normalize to midnight local time
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }
-  if(str.includes('/')) {
-    var parts = str.split('/');
-    if(parts.length===3) {
-      var d = new Date(parts[2]+'-'+parts[1].padStart(2,'0')+'-'+parts[0].padStart(2,'0')+'T00:00:00');
-      return isNaN(d.getTime()) ? null : d;
-    }
+  // YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}/.test(str)) {
+    var d2 = new Date(str.substring(0,10)+'T00:00:00');
+    return isNaN(d2.getTime()) ? null : d2;
+  }
+  // DD/MM/YYYY
+  if(/^\d{2}\/\d{2}\/\d{4}/.test(str)) {
+    var p = str.split('/');
+    var d3 = new Date(p[2]+'-'+p[1]+'-'+p[0]+'T00:00:00');
+    return isNaN(d3.getTime()) ? null : d3;
   }
   return null;
 }
