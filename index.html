@@ -30,12 +30,12 @@ nav{padding:10px 8px;flex:1;overflow-y:auto}
 /* MAIN */
 .main{margin-left:230px;display:flex;flex-direction:column;height:100vh;overflow:hidden}
 .topbar{height:50px;flex-shrink:0;background:#ffffff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px}
-#pages{flex:1;min-height:0;overflow:hidden}
+#pages{flex:1;min-height:0;overflow:hidden;position:relative}
 .topbar-title{font-weight:600;font-size:14px;flex:1;color:#1e1e2e}
 .sync{font-size:12px;color:var(--accent)}
 .menu-btn{display:none;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
 /* PAGES */
-.page{display:none;height:100%;overflow:hidden;background:#f0f0f7}
+.page{display:none;overflow:hidden;background:#f0f0f7;position:absolute;top:0;left:0;right:0;bottom:0}
 .page.active{display:flex;flex-direction:column}
 .page-hd{padding:10px 18px 0;flex-shrink:0}
 .page-hd h1{font-size:15px;font-weight:700;margin-bottom:1px}
