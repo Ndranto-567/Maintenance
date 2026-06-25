@@ -902,6 +902,8 @@ function navigateTo(page) {
   document.getElementById('topTitle').textContent=TITLES[page]||page;
   if(page!=='admin') loadData(page);
   if(page==='procglob') populateFilters();
+  if(page==='gantt') { initGanttFilters(); }
+  if(page==='procglob') populateFilters();
 }
 
 // ============================================================
@@ -936,6 +938,23 @@ async function apiPost(sheet,data) {
 }
 
 async function loadData(sheet) {
+  if(sheet==='gantt') {
+    // Pour gantt, recharger processus et maintenance depuis Sheets
+    if(cfg.processus&&cfg.processus.trim()){
+      showLoader(true,'Chargement processus...');
+      const d=await apiGet('processus');
+      if(d&&Array.isArray(d)&&d.length) store.processus=d;
+      showLoader(false);
+    }
+    if(cfg.maintenance&&cfg.maintenance.trim()){
+      showLoader(true,'Chargement maintenance...');
+      const d=await apiGet('maintenance');
+      if(d&&Array.isArray(d)&&d.length) store.maintenance=d;
+      showLoader(false);
+    }
+    initGanttFilters();
+    return;
+  }
   if(cfg[sheet]&&cfg[sheet].trim()) {
     showLoader(true,'Chargement '+sheet+'...');
     const d=await apiGet(sheet);
@@ -1785,13 +1804,16 @@ function buildGantt() {
   var today = new Date(); today.setHours(0,0,0,0);
 
   // Filter processus rows
+  console.log('Gantt: store.processus length=', store.processus.length, 'store.maintenance length=', store.maintenance.length);
+  console.log('Gantt: fromVal=', fromVal, 'toVal=', toVal, 'machine=', machine);
   var procRows = store.processus.filter(function(p){
     return !machine || p.machine===machine;
   });
+  console.log('Gantt: procRows after filter=', procRows.length);
 
   if(!procRows.length){
     document.getElementById('gantt-empty').style.display='block';
-    document.getElementById('gantt-empty').textContent='Aucune action trouvée pour cette sélection.';
+    document.getElementById('gantt-empty').textContent='Aucune action trouvée. Vérifiez que Base Processus est chargée ('+store.processus.length+' actions en mémoire).';
     document.getElementById('gantt-table').style.display='none';
     return;
   }
